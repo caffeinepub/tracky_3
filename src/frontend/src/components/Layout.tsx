@@ -1,7 +1,7 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { BookOpen, LogOut, LayoutDashboard, ListChecks } from 'lucide-react';
+import { BookOpen, LogOut, LayoutDashboard, ListChecks, FolderOpen } from 'lucide-react';
 import { useGetCallerUserProfile } from '../hooks/useQueries';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 
@@ -46,6 +46,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     Dashboard
                   </Button>
                   <Button
+                    variant={currentPath === '/subjects' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => navigate({ to: '/subjects' })}
+                    className="gap-2"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                    Subjects
+                  </Button>
+                  <Button
                     variant={currentPath === '/syllabus' ? 'default' : 'ghost'}
                     size="sm"
                     onClick={() => navigate({ to: '/syllabus' })}
@@ -76,6 +85,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               >
                 <LayoutDashboard className="w-4 h-4" />
                 Dashboard
+              </Button>
+              <Button
+                variant={currentPath === '/subjects' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => navigate({ to: '/subjects' })}
+                className="gap-2 flex-1"
+              >
+                <FolderOpen className="w-4 h-4" />
+                Subjects
               </Button>
               <Button
                 variant={currentPath === '/syllabus' ? 'default' : 'ghost'}

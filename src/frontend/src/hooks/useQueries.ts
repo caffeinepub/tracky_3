@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { UserProfile, ChapterStatus } from '../backend';
+import type { UserProfile, ChapterStatus, Subject, Chapter } from '../backend';
 
 // User Profile Queries
 export function useGetCallerUserProfile() {
@@ -38,25 +38,62 @@ export function useSaveCallerUserProfile() {
   });
 }
 
-// Chapter Queries
-export interface Chapter {
-  name: string;
-  status: ChapterStatus;
-  studyTimeMinutes: number;
+// Subject Queries
+export function useGetSubjects() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<Subject[]>({
+    queryKey: ['subjects'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getSubjects();
+    },
+    enabled: !!actor && !actorFetching,
+    retry: false,
+  });
 }
 
-export function useGetChapters() {
+export function useCreateSubject() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (name: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createSubject(name);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardProgress'] });
+    },
+  });
+}
+
+export function useGetSubjectProgress(subjectId: bigint) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<bigint>({
+    queryKey: ['subjectProgress', subjectId.toString()],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getSubjectProgress(subjectId);
+    },
+    enabled: !!actor && !actorFetching && subjectId !== undefined,
+    retry: false,
+  });
+}
+
+// Chapter Queries
+export function useGetChaptersBySubject(subjectId: bigint | null) {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<Chapter[]>({
-    queryKey: ['chapters'],
+    queryKey: ['chapters', 'bySubject', subjectId?.toString()],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      // Backend doesn't have a getChapters method, so we'll derive from stats
-      // For now, return empty array - chapters are managed through mutations
-      return [];
+      if (!actor || subjectId === null) throw new Error('Actor or subject not available');
+      return actor.getChaptersBySubject(subjectId);
     },
-    enabled: !!actor && !actorFetching,
+    enabled: !!actor && !actorFetching && subjectId !== null,
     retry: false,
   });
 }
@@ -66,15 +103,16 @@ export function useAddChapter() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (name: string) => {
+    mutationFn: async ({ name, subjectId }: { name: string; subjectId: bigint }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.addChapter(name);
+      return actor.addChapter(name, subjectId);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['chapters'] });
+      queryClient.invalidateQueries({ queryKey: ['chapters', 'bySubject', variables.subjectId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['dashboardProgress'] });
       queryClient.invalidateQueries({ queryKey: ['chapterStats'] });
-      queryClient.invalidateQueries({ queryKey: ['totalStudyTime'] });
+      queryClient.invalidateQueries({ queryKey: ['subjectProgress', variables.subjectId.toString()] });
     },
   });
 }
@@ -84,14 +122,53 @@ export function useUpdateChapterStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ chapterName, newStatus }: { chapterName: string; newStatus: ChapterStatus }) => {
+    mutationFn: async ({
+      chapterName,
+      newStatus,
+      subjectId,
+    }: {
+      chapterName: string;
+      newStatus: ChapterStatus;
+      subjectId: bigint;
+    }) => {
       if (!actor) throw new Error('Actor not available');
       return actor.updateChapterStatus(chapterName, newStatus);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chapters'] });
+    onMutate: async ({ chapterName, newStatus, subjectId }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['chapters', 'bySubject', subjectId.toString()] });
+
+      // Snapshot previous value
+      const previousChapters = queryClient.getQueryData<Chapter[]>([
+        'chapters',
+        'bySubject',
+        subjectId.toString(),
+      ]);
+
+      // Optimistically update
+      if (previousChapters) {
+        queryClient.setQueryData<Chapter[]>(
+          ['chapters', 'bySubject', subjectId.toString()],
+          previousChapters.map((ch) => (ch.name === chapterName ? { ...ch, status: newStatus } : ch))
+        );
+      }
+
+      return { previousChapters, subjectId };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousChapters) {
+        queryClient.setQueryData(
+          ['chapters', 'bySubject', context.subjectId.toString()],
+          context.previousChapters
+        );
+      }
+    },
+    onSettled: (_, __, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['chapters', 'bySubject', variables.subjectId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['dashboardProgress'] });
       queryClient.invalidateQueries({ queryKey: ['chapterStats'] });
+      queryClient.invalidateQueries({ queryKey: ['subjectProgress', variables.subjectId.toString()] });
     },
   });
 }
@@ -106,9 +183,8 @@ export function useAddStudyTime() {
       return actor.addStudyTimeToChapter(chapterName, BigInt(minutes));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chapters'] });
       queryClient.invalidateQueries({ queryKey: ['totalStudyTime'] });
-      queryClient.invalidateQueries({ queryKey: ['chapterStats'] });
+      queryClient.invalidateQueries({ queryKey: ['chapters'] });
     },
   });
 }
@@ -117,12 +193,11 @@ export function useAddStudyTime() {
 export function useGetDailyGoal() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<number>({
+  return useQuery<bigint>({
     queryKey: ['dailyGoal'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      const goal = await actor.getDailyStudyGoal();
-      return Number(goal);
+      return actor.getDailyStudyGoal();
     },
     enabled: !!actor && !actorFetching,
     retry: false,
@@ -148,12 +223,11 @@ export function useSetDailyGoal() {
 export function useGetDashboardProgress() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<number>({
+  return useQuery<bigint>({
     queryKey: ['dashboardProgress'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      const progress = await actor.getDashboardProgress();
-      return Number(progress);
+      return actor.getDashboardProgress();
     },
     enabled: !!actor && !actorFetching,
     retry: false,
@@ -163,16 +237,11 @@ export function useGetDashboardProgress() {
 export function useGetChapterStats() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<{ total: number; completed: number; pending: number }>({
+  return useQuery<[bigint, bigint, bigint]>({
     queryKey: ['chapterStats'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      const [total, completed, pending] = await actor.getChapterStats();
-      return {
-        total: Number(total),
-        completed: Number(completed),
-        pending: Number(pending),
-      };
+      return actor.getChapterStats();
     },
     enabled: !!actor && !actorFetching,
     retry: false,
@@ -182,12 +251,11 @@ export function useGetChapterStats() {
 export function useGetTotalStudyTime() {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<number>({
+  return useQuery<bigint>({
     queryKey: ['totalStudyTime'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      const time = await actor.getTotalStudyTime();
-      return Number(time);
+      return actor.getTotalStudyTime();
     },
     enabled: !!actor && !actorFetching,
     retry: false,

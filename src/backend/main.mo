@@ -1,14 +1,14 @@
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
-import List "mo:core/List";
 import Map "mo:core/Map";
-import Nat "mo:core/Nat";
-import Principal "mo:core/Principal";
+import List "mo:core/List";
 import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
-import Migration "migration";
+import Principal "mo:core/Principal";
+import Time "mo:core/Time";
+import Nat "mo:core/Nat";
 
-(with migration = Migration.run)
+
+
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -51,13 +51,58 @@ actor {
     name : Text;
     status : ChapterStatus;
     studyTimeMinutes : Nat;
+    subjectId : Nat;
+  };
+
+  public type Subject = {
+    id : Nat;
+    name : Text;
+    createdAt : Time.Time;
   };
 
   let dailyStudyGoalsByUser = Map.empty<Principal, Nat>();
-
   let chaptersByUser = Map.empty<Principal, List.List<Chapter>>();
+  let subjectsByUser = Map.empty<Principal, List.List<Subject>>();
+  var nextSubjectId = 0;
 
-  public shared ({ caller }) func addChapter(name : Text) : async () {
+  // Subject Management
+
+  public shared ({ caller }) func createSubject(name : Text) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can create subjects");
+    };
+
+    let subject : Subject = {
+      id = nextSubjectId;
+      name;
+      createdAt = Time.now();
+    };
+    nextSubjectId += 1;
+
+    let currentSubjects = switch (subjectsByUser.get(caller)) {
+      case (null) { List.empty<Subject>() };
+      case (?subjects) { subjects };
+    };
+
+    currentSubjects.add(subject);
+    subjectsByUser.add(caller, currentSubjects);
+    subject.id;
+  };
+
+  public query ({ caller }) func getSubjects() : async [Subject] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view subjects");
+    };
+
+    switch (subjectsByUser.get(caller)) {
+      case (null) { [] };
+      case (?subjects) { subjects.toArray() };
+    };
+  };
+
+  // Chapter Management
+
+  public shared ({ caller }) func addChapter(name : Text, subjectId : Nat) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can add chapters");
     };
@@ -66,6 +111,7 @@ actor {
       name;
       status = #pending;
       studyTimeMinutes = 0;
+      subjectId;
     };
 
     let currentChapters = switch (chaptersByUser.get(caller)) {
@@ -199,6 +245,48 @@ actor {
           }
         );
         totalTime;
+      };
+    };
+  };
+
+  // New Query Functions
+
+  public query ({ caller }) func getChaptersBySubject(subjectId : Nat) : async [Chapter] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view chapters");
+    };
+
+    switch (chaptersByUser.get(caller)) {
+      case (null) { [] };
+      case (?chapters) {
+        let filteredChapters = chapters.filter(
+          func(chapter) { chapter.subjectId == subjectId }
+        );
+        filteredChapters.toArray();
+      };
+    };
+  };
+
+  public query ({ caller }) func getSubjectProgress(subjectId : Nat) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view subject progress");
+    };
+
+    switch (chaptersByUser.get(caller)) {
+      case (null) { 0 };
+      case (?chapters) {
+        let subjectChapters = chapters.filter(
+          func(chapter) { chapter.subjectId == subjectId }
+        );
+
+        let totalChapters = subjectChapters.size();
+        if (totalChapters == 0) { return 0 };
+
+        let completedChapters = subjectChapters.filter(
+          func(chapter) { chapter.status == #completed }
+        ).size();
+
+        completedChapters * 100 / totalChapters;
       };
     };
   };

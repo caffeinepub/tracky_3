@@ -2,19 +2,32 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Play, Square, Clock, AlertCircle } from 'lucide-react';
+import { Play, Square, Clock, AlertCircle, Pause } from 'lucide-react';
 import { useAddStudyTime } from '../hooks/useQueries';
 
-export default function StudyTimer() {
+interface StudyTimerProps {
+  selectedChapter?: string | null;
+}
+
+export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
   const [isRunning, setIsRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [chapterName, setChapterName] = useState('');
+  const [startTime, setStartTime] = useState<number | null>(null);
   const addStudyTimeMutation = useAddStudyTime();
+
+  // Reset timer when selected chapter changes
+  useEffect(() => {
+    setIsRunning(false);
+    setIsPaused(false);
+    setElapsedSeconds(0);
+    setStartTime(null);
+  }, [selectedChapter]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isRunning) {
+    if (isRunning && !isPaused) {
       interval = setInterval(() => {
         setElapsedSeconds((prev) => prev + 1);
       }, 1000);
@@ -23,7 +36,7 @@ export default function StudyTimer() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isRunning]);
+  }, [isRunning, isPaused]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -32,28 +45,46 @@ export default function StudyTimer() {
   };
 
   const handleStart = () => {
-    if (!chapterName.trim()) return;
+    if (!selectedChapter?.trim()) return;
     setIsRunning(true);
+    setIsPaused(false);
+    setStartTime(Date.now());
+  };
+
+  const handlePause = () => {
+    setIsPaused(true);
+  };
+
+  const handleResume = () => {
+    setIsPaused(false);
   };
 
   const handleStop = async () => {
     setIsRunning(false);
+    setIsPaused(false);
 
-    if (elapsedSeconds > 0 && chapterName.trim()) {
+    if (elapsedSeconds > 0 && selectedChapter?.trim()) {
       const minutes = Math.ceil(elapsedSeconds / 60);
       try {
         await addStudyTimeMutation.mutateAsync({
-          chapterName: chapterName.trim(),
+          chapterName: selectedChapter.trim(),
           minutes,
         });
         setElapsedSeconds(0);
-        setChapterName('');
+        setStartTime(null);
       } catch (err) {
         console.error('Failed to save study time:', err);
       }
     } else {
       setElapsedSeconds(0);
+      setStartTime(null);
     }
+  };
+
+  const getStatusText = () => {
+    if (isPaused) return 'Timer paused';
+    if (isRunning) return 'Timer is running...';
+    return 'Ready to start studying';
   };
 
   return (
@@ -67,52 +98,67 @@ export default function StudyTimer() {
       <CardContent className="space-y-4">
         <div className="text-center">
           <div className="text-5xl font-bold text-foreground mb-2 font-mono">{formatTime(elapsedSeconds)}</div>
-          <p className="text-sm text-muted-foreground">
-            {isRunning ? 'Timer is running...' : 'Ready to start studying'}
-          </p>
+          <p className="text-sm text-muted-foreground">{getStatusText()}</p>
+          {selectedChapter && (
+            <p className="text-xs text-muted-foreground mt-1">Tracking: {selectedChapter}</p>
+          )}
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="timerChapter" className="text-sm font-medium text-foreground">
-            Chapter Name
-          </label>
-          <input
-            id="timerChapter"
-            type="text"
-            placeholder="Enter chapter name to track time"
-            value={chapterName}
-            onChange={(e) => setChapterName(e.target.value)}
-            disabled={isRunning}
-            className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
-          />
-        </div>
-
-        {!chapterName.trim() && !isRunning && (
+        {!selectedChapter && !isRunning && (
           <Alert className="bg-cream/50 border-border">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-sm">Enter a chapter name before starting the timer.</AlertDescription>
+            <AlertDescription className="text-sm">
+              Select a chapter from the list below to start tracking time.
+            </AlertDescription>
           </Alert>
         )}
 
         <div className="flex gap-2">
-          {!isRunning ? (
+          {!isRunning && !isPaused ? (
             <Button
               onClick={handleStart}
-              disabled={!chapterName.trim()}
+              disabled={!selectedChapter?.trim()}
               className="flex-1 gap-2 bg-sage hover:bg-sage/90"
             >
               <Play className="w-4 h-4" />
               Start
             </Button>
+          ) : isPaused ? (
+            <>
+              <Button
+                onClick={handleResume}
+                className="flex-1 gap-2 bg-sage hover:bg-sage/90"
+              >
+                <Play className="w-4 h-4" />
+                Resume
+              </Button>
+              <Button
+                onClick={handleStop}
+                disabled={addStudyTimeMutation.isPending}
+                className="flex-1 gap-2 bg-terracotta hover:bg-terracotta/90"
+              >
+                <Square className="w-4 h-4" />
+                {addStudyTimeMutation.isPending ? 'Saving...' : 'Stop'}
+              </Button>
+            </>
           ) : (
-            <Button
-              onClick={handleStop}
-              disabled={addStudyTimeMutation.isPending}
-              className="flex-1 gap-2 bg-terracotta hover:bg-terracotta/90"
-            >
-              <Square className="w-4 h-4" />
-              {addStudyTimeMutation.isPending ? 'Saving...' : 'Stop'}
-            </Button>
+            <>
+              <Button
+                onClick={handlePause}
+                className="flex-1 gap-2 bg-amber-500 hover:bg-amber-600"
+              >
+                <Pause className="w-4 h-4" />
+                Pause
+              </Button>
+              <Button
+                onClick={handleStop}
+                disabled={addStudyTimeMutation.isPending}
+                className="flex-1 gap-2 bg-terracotta hover:bg-terracotta/90"
+              >
+                <Square className="w-4 h-4" />
+                {addStudyTimeMutation.isPending ? 'Saving...' : 'Stop'}
+              </Button>
+            </>
           )}
         </div>
       </CardContent>

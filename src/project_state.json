@@ -1,13 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
-  "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with user authentication",
+  "projectStateVersion": 9,
+  "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with user authentication. Students can add subjects, and within each subject, add multiple chapters with completion tracking. Progress is calculated per-subject and overall, with automatic report generation.",
   "architectural_notes": [
     "User authentication required with email/password",
     "Database must enforce per-user data isolation",
     "Dashboard aggregates data from syllabus and study tracking",
     "Chapters must persist permanently and never auto-delete",
-    "Study time tracked individually per chapter with timer functionality"
+    "Study time tracked individually per chapter with timer functionality",
+    "Subject-Chapter hierarchy: Subjects contain multiple Chapters",
+    "Completed chapters remain visible but visually separated (e.g., faded or in a separate section)",
+    "Progress calculation: per-subject and overall completion percentages",
+    "Progress Report: aggregates subject and chapter statistics with visual bars",
+    "Study timer supports pause/resume in addition to start/stop functionality"
   ],
   "known_issues": [],
   "isFixRequest": false,
@@ -131,6 +136,86 @@
         "REQ-20"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-create-a-frontend-page-for-managing-subjects-that-displays-all-user-subjects-in-a-list-with-add-subject-form-subject-name-input-and-submit-button",
+      "title": "Create a frontend page for managing subjects that displays all user subjects in a list with add subject form (subject name input and submit button)",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-a-progress-bar-for-each-subject-showing-completion-percentage-calculated-as-completed-chapters-total-chapters-100",
+      "title": "Display a progress bar for each subject showing completion percentage calculated as (completed chapters / total chapters) × 100",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-syllabus-tracker-page-to-organize-chapters-by-subject-allowing-users-to-select-a-subject-first-before-viewing-and-adding-chapters-within-that-subject",
+      "title": "Update the syllabus tracker page to organize chapters by subject, allowing users to select a subject first before viewing and adding chapters within that subject",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-separate-completed-chapters-from-incomplete-chapters-in-the-chapter-list-displaying-completed-chapters-in-a-distinct-completed-section-below-incomplete-chapters-with-tick-mark-and-faded-or-highlighted-styling",
+      "title": "Separate completed chapters from incomplete chapters in the chapter list, displaying completed chapters in a distinct 'Completed' section below incomplete chapters with tick mark and faded or highlighted styling",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-chapter-status-toggle-to-instantly-reflect-changes-in-the-ui-moving-chapters-between-incomplete-and-completed-sections-without-page-reload",
+      "title": "Update chapter status toggle to instantly reflect changes in the UI, moving chapters between incomplete and completed sections without page reload",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-progress-report-component-displaying-total-subjects-total-chapters-completed-chapters-remaining-chapters-overall-completion-percentage-and-a-visual-progress-bar",
+      "title": "Create a Progress Report component displaying: Total Subjects, Total Chapters, Completed Chapters, Remaining Chapters, Overall Completion Percentage, and a visual progress bar",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-dashboard-to-display-overall-syllabus-completion-percentage-calculated-across-all-subjects-using-total-completed-chapters-total-chapters-100",
+      "title": "Update the dashboard to display overall syllabus completion percentage calculated across all subjects using (total completed chapters / total chapters) × 100",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-studytimer-component-to-add-pause-and-resume-functionality-add-a-pause-button-that-appears-when-timer-is-running-and-a-resume-button-that-appears-when-timer-is-paused-preserving-elapsed-time-across-pause-resume-cycles",
+      "title": "Update the StudyTimer component to add pause and resume functionality: add a Pause button that appears when timer is running, and a Resume button that appears when timer is paused, preserving elapsed time across pause/resume cycles",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-studytimer-component-tracks-study-time-separately-for-each-selected-subject-chapter-maintaining-accurate-time-accumulation-per-chapter-when-timer-stops",
+      "title": "Ensure the StudyTimer component tracks study time separately for each selected subject/chapter, maintaining accurate time accumulation per chapter when timer stops",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-motivational-quote-display-component-to-the-dashboard-that-shows-a-different-inspirational-quote-each-day-placed-prominently-near-the-top-of-the-dashboard-page",
+      "title": "Add a motivational quote display component to the dashboard that shows a different inspirational quote each day, placed prominently near the top of the dashboard page",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -229,6 +314,112 @@
       "summary": "Implement backend methods to track and accumulate study time for individual chapters, storing time in minutes.",
       "reqIds": [
         "REQ-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add Subject entity: students can manually create subjects to organize chapters hierarchically",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Chapters must belong to a Subject, allowing multiple chapters per subject",
+      "reqIds": [
+        "AR-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Display completed chapters separately (e.g., below or in a Completed section) with tick mark and faded/highlighted style",
+      "reqIds": [
+        "AR-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Calculate and display progress percentage per subject: (Completed Chapters / Total Chapters) × 100 with progress bar",
+      "reqIds": [
+        "AR-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Generate a simple Progress Report showing: Total Subjects, Total Chapters, Completed Chapters, Remaining Chapters, Overall Completion %, and visual progress bar",
+      "reqIds": [
+        "AR-15",
+        "AR-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Update progress instantly when a chapter is checked or unchecked",
+      "reqIds": [
+        "AR-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Create a backend data model for subjects with fields: subject name (text) and creation timestamp, stored persistently per user with strict access control",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Implement backend methods to create new subjects with user authentication, ensuring each user can only create and access their own subjects",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Update the backend chapter data model to include a subjectId field, establishing a parent-child relationship where each chapter must belong to exactly one subject",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Implement backend methods to query chapters by subjectId, returning all chapters belonging to a specific subject with authentication checks",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Implement backend method to calculate per-subject progress as (completed chapters / total chapters) × 100, returning progress percentage for each subject",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Add pause/resume functionality to the study timer (currently only has start/stop)",
+      "reqIds": [
+        "AR-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Display a daily motivational quote on the dashboard",
+      "reqIds": [
+        "AR-3"
       ],
       "status": "pending"
     }

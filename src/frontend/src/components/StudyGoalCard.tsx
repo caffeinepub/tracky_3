@@ -15,7 +15,7 @@ export default function StudyGoalCard() {
 
   useEffect(() => {
     if (dailyGoal !== undefined && dailyGoal > 0) {
-      setGoalInput(dailyGoal.toString());
+      setGoalInput(Number(dailyGoal).toString());
     }
   }, [dailyGoal]);
 
@@ -30,8 +30,8 @@ export default function StudyGoalCard() {
     }
   };
 
-  const currentGoal = dailyGoal ?? 0;
-  const currentTime = totalStudyTime ?? 0;
+  const currentGoal = Number(dailyGoal ?? 0n);
+  const currentTime = Number(totalStudyTime ?? 0n);
   const progressPercentage = currentGoal > 0 ? Math.min((currentTime / currentGoal) * 100, 100) : 0;
   const goalReached = currentGoal > 0 && currentTime >= currentGoal;
 

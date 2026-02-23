@@ -1,6 +1,8 @@
 import ProgressCard from '../components/ProgressCard';
 import StudyTimeCard from '../components/StudyTimeCard';
 import ChapterStatsCard from '../components/ChapterStatsCard';
+import ProgressReport from '../components/ProgressReport';
+import MotivationalQuote from '../components/MotivationalQuote';
 import { useGetDashboardProgress, useGetChapterStats, useGetTotalStudyTime } from '../hooks/useQueries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
@@ -35,9 +37,15 @@ export default function DashboardPage() {
     );
   }
 
-  const progress = progressPercentage ?? 0;
-  const studyMinutes = totalStudyTime ?? 0;
-  const stats = chapterStats ?? { total: 0, completed: 0, pending: 0 };
+  const progress = Number(progressPercentage ?? 0n);
+  const studyMinutes = Number(totalStudyTime ?? 0n);
+  const stats = chapterStats
+    ? {
+        total: Number(chapterStats[0]),
+        completed: Number(chapterStats[1]),
+        pending: Number(chapterStats[2]),
+      }
+    : { total: 0, completed: 0, pending: 0 };
 
   return (
     <div className="space-y-8">
@@ -45,6 +53,10 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
         <p className="text-muted-foreground">Track your progress and study time</p>
       </div>
+
+      <MotivationalQuote />
+
+      <ProgressReport />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <ProgressCard percentage={progress} />
@@ -55,7 +67,8 @@ export default function DashboardPage() {
       {stats.total === 0 && (
         <Alert className="bg-sage/10 border-sage">
           <AlertDescription className="text-foreground">
-            Welcome to Tracky! Start by visiting the Syllabus Tracker to add chapters and track your progress.
+            Welcome to Tracky! Start by visiting the Subjects page to add subjects, then track your chapters in the
+            Syllabus Tracker.
           </AlertDescription>
         </Alert>
       )}

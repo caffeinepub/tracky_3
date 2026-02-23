@@ -89,8 +89,20 @@ export class ExternalBlob {
         return this;
     }
 }
+export type Time = bigint;
+export interface Subject {
+    id: bigint;
+    name: string;
+    createdAt: Time;
+}
 export interface UserProfile {
     email: string;
+}
+export interface Chapter {
+    status: ChapterStatus;
+    name: string;
+    subjectId: bigint;
+    studyTimeMinutes: bigint;
 }
 export enum ChapterStatus {
     pending = "pending",
@@ -103,14 +115,18 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    addChapter(name: string): Promise<void>;
+    addChapter(name: string, subjectId: bigint): Promise<void>;
     addStudyTimeToChapter(chapterName: string, minutes: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createSubject(name: string): Promise<bigint>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getChapterStats(): Promise<[bigint, bigint, bigint]>;
+    getChaptersBySubject(subjectId: bigint): Promise<Array<Chapter>>;
     getDailyStudyGoal(): Promise<bigint>;
     getDashboardProgress(): Promise<bigint>;
+    getSubjectProgress(subjectId: bigint): Promise<bigint>;
+    getSubjects(): Promise<Array<Subject>>;
     getTotalStudyTime(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
@@ -118,7 +134,7 @@ export interface backendInterface {
     setDailyStudyGoal(minutes: bigint): Promise<void>;
     updateChapterStatus(chapterName: string, newStatus: ChapterStatus): Promise<void>;
 }
-import type { ChapterStatus as _ChapterStatus, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { Chapter as _Chapter, ChapterStatus as _ChapterStatus, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -135,17 +151,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async addChapter(arg0: string): Promise<void> {
+    async addChapter(arg0: string, arg1: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.addChapter(arg0);
+                const result = await this.actor.addChapter(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addChapter(arg0);
+            const result = await this.actor.addChapter(arg0, arg1);
             return result;
         }
     }
@@ -174,6 +190,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async createSubject(arg0: string): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createSubject(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createSubject(arg0);
             return result;
         }
     }
@@ -227,6 +257,20 @@ export class Backend implements backendInterface {
             ];
         }
     }
+    async getChaptersBySubject(arg0: bigint): Promise<Array<Chapter>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getChaptersBySubject(arg0);
+                return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getChaptersBySubject(arg0);
+            return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getDailyStudyGoal(): Promise<bigint> {
         if (this.processError) {
             try {
@@ -252,6 +296,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getDashboardProgress();
+            return result;
+        }
+    }
+    async getSubjectProgress(arg0: bigint): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSubjectProgress(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSubjectProgress(arg0);
+            return result;
+        }
+    }
+    async getSubjects(): Promise<Array<Subject>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSubjects();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSubjects();
             return result;
         }
     }
@@ -328,23 +400,54 @@ export class Backend implements backendInterface {
     async updateChapterStatus(arg0: string, arg1: ChapterStatus): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n6(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n11(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n6(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n11(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
+}
+function from_candid_ChapterStatus_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ChapterStatus): ChapterStatus {
+    return from_candid_variant_n10(_uploadFile, _downloadFile, value);
+}
+function from_candid_Chapter_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Chapter): Chapter {
+    return from_candid_record_n8(_uploadFile, _downloadFile, value);
 }
 function from_candid_UserRole_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n5(_uploadFile, _downloadFile, value);
 }
 function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    status: _ChapterStatus;
+    name: string;
+    subjectId: bigint;
+    studyTimeMinutes: bigint;
+}): {
+    status: ChapterStatus;
+    name: string;
+    subjectId: bigint;
+    studyTimeMinutes: bigint;
+} {
+    return {
+        status: from_candid_ChapterStatus_n9(_uploadFile, _downloadFile, value.status),
+        name: value.name,
+        subjectId: value.subjectId,
+        studyTimeMinutes: value.studyTimeMinutes
+    };
+}
+function from_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    pending: null;
+} | {
+    completed: null;
+}): ChapterStatus {
+    return "pending" in value ? ChapterStatus.pending : "completed" in value ? ChapterStatus.completed : value;
 }
 function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
@@ -355,11 +458,25 @@ function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function to_candid_ChapterStatus_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ChapterStatus): _ChapterStatus {
-    return to_candid_variant_n7(_uploadFile, _downloadFile, value);
+function from_candid_vec_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Chapter>): Array<Chapter> {
+    return value.map((x)=>from_candid_Chapter_n7(_uploadFile, _downloadFile, x));
+}
+function to_candid_ChapterStatus_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ChapterStatus): _ChapterStatus {
+    return to_candid_variant_n12(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ChapterStatus): {
+    pending: null;
+} | {
+    completed: null;
+} {
+    return value == ChapterStatus.pending ? {
+        pending: null
+    } : value == ChapterStatus.completed ? {
+        completed: null
+    } : value;
 }
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
@@ -374,17 +491,6 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         user: null
     } : value == UserRole.guest ? {
         guest: null
-    } : value;
-}
-function to_candid_variant_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ChapterStatus): {
-    pending: null;
-} | {
-    completed: null;
-} {
-    return value == ChapterStatus.pending ? {
-        pending: null
-    } : value == ChapterStatus.completed ? {
-        completed: null
     } : value;
 }
 export interface CreateActorOptions {

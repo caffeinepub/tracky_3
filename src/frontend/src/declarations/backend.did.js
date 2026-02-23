@@ -18,17 +18,33 @@ export const ChapterStatus = IDL.Variant({
   'pending' : IDL.Null,
   'completed' : IDL.Null,
 });
+export const Chapter = IDL.Record({
+  'status' : ChapterStatus,
+  'name' : IDL.Text,
+  'subjectId' : IDL.Nat,
+  'studyTimeMinutes' : IDL.Nat,
+});
+export const Time = IDL.Int;
+export const Subject = IDL.Record({
+  'id' : IDL.Nat,
+  'name' : IDL.Text,
+  'createdAt' : Time,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addChapter' : IDL.Func([IDL.Text], [], []),
+  'addChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
   'addStudyTimeToChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createSubject' : IDL.Func([IDL.Text], [IDL.Nat], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getChapterStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
+  'getChaptersBySubject' : IDL.Func([IDL.Nat], [IDL.Vec(Chapter)], ['query']),
   'getDailyStudyGoal' : IDL.Func([], [IDL.Nat], ['query']),
   'getDashboardProgress' : IDL.Func([], [IDL.Nat], ['query']),
+  'getSubjectProgress' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
+  'getSubjects' : IDL.Func([], [IDL.Vec(Subject)], ['query']),
   'getTotalStudyTime' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -54,17 +70,33 @@ export const idlFactory = ({ IDL }) => {
     'pending' : IDL.Null,
     'completed' : IDL.Null,
   });
+  const Chapter = IDL.Record({
+    'status' : ChapterStatus,
+    'name' : IDL.Text,
+    'subjectId' : IDL.Nat,
+    'studyTimeMinutes' : IDL.Nat,
+  });
+  const Time = IDL.Int;
+  const Subject = IDL.Record({
+    'id' : IDL.Nat,
+    'name' : IDL.Text,
+    'createdAt' : Time,
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addChapter' : IDL.Func([IDL.Text], [], []),
+    'addChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
     'addStudyTimeToChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createSubject' : IDL.Func([IDL.Text], [IDL.Nat], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getChapterStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
+    'getChaptersBySubject' : IDL.Func([IDL.Nat], [IDL.Vec(Chapter)], ['query']),
     'getDailyStudyGoal' : IDL.Func([], [IDL.Nat], ['query']),
     'getDashboardProgress' : IDL.Func([], [IDL.Nat], ['query']),
+    'getSubjectProgress' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
+    'getSubjects' : IDL.Func([], [IDL.Vec(Subject)], ['query']),
     'getTotalStudyTime' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],

@@ -10,22 +10,34 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface Chapter {
+  'status' : ChapterStatus,
+  'name' : string,
+  'subjectId' : bigint,
+  'studyTimeMinutes' : bigint,
+}
 export type ChapterStatus = { 'pending' : null } |
   { 'completed' : null };
+export interface Subject { 'id' : bigint, 'name' : string, 'createdAt' : Time }
+export type Time = bigint;
 export interface UserProfile { 'email' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addChapter' : ActorMethod<[string], undefined>,
+  'addChapter' : ActorMethod<[string, bigint], undefined>,
   'addStudyTimeToChapter' : ActorMethod<[string, bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createSubject' : ActorMethod<[string], bigint>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getChapterStats' : ActorMethod<[], [bigint, bigint, bigint]>,
+  'getChaptersBySubject' : ActorMethod<[bigint], Array<Chapter>>,
   'getDailyStudyGoal' : ActorMethod<[], bigint>,
   'getDashboardProgress' : ActorMethod<[], bigint>,
+  'getSubjectProgress' : ActorMethod<[bigint], bigint>,
+  'getSubjects' : ActorMethod<[], Array<Subject>>,
   'getTotalStudyTime' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,

@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfileSetupPage from './pages/ProfileSetupPage';
 import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
+import SubjectsPage from './pages/SubjectsPage';
 import Layout from './components/Layout';
 import { useGetCallerUserProfile } from './hooks/useQueries';
 
@@ -88,6 +89,15 @@ function ProtectedSyllabusTracker() {
   );
 }
 
+// Protected subjects component
+function ProtectedSubjects() {
+  return (
+    <ProtectedRoute>
+      <SubjectsPage />
+    </ProtectedRoute>
+  );
+}
+
 // Root route with layout
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -118,6 +128,12 @@ const syllabusRoute = createRoute({
   component: ProtectedSyllabusTracker,
 });
 
+const subjectsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/subjects',
+  component: ProtectedSubjects,
+});
+
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
@@ -125,7 +141,14 @@ const indexRoute = createRoute({
 });
 
 // Create router
-const routeTree = rootRoute.addChildren([indexRoute, loginRoute, setupProfileRoute, dashboardRoute, syllabusRoute]);
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  loginRoute,
+  setupProfileRoute,
+  dashboardRoute,
+  syllabusRoute,
+  subjectsRoute,
+]);
 
 const router = createRouter({ routeTree });
 
