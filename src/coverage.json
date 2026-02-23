@@ -1,0 +1,182 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-23T23:18:53.067Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 13,
+    "implemented": 9,
+    "items": [
+      {
+        "id": "REQ-10",
+        "summary": "Implement backend methods to update chapter status between Pending and Completed, with user access control.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Implement backend methods to track and accumulate study time for individual chapters, storing time in minutes.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Create a frontend page for the syllabus tracker that displays all user chapters in a list, showing chapter name, status badge, and individual study time for each chapter.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/components/ChapterListItem.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/Layout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Add a form on the syllabus tracker page to manually create new chapters with a name input field and submit button.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Add status toggle functionality on each chapter item to switch between Pending and Completed states.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/ChapterListItem.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "Create a study timer component with Start and Stop buttons that tracks elapsed time in real-time and displays it in minutes and seconds.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/StudyTimer.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/StudyTimer.tsx"
+        ]
+      },
+      {
+        "id": "REQ-16",
+        "summary": "Add chapter selection to the study timer so users can associate timed study sessions with specific chapters, and save accumulated time to the selected chapter when timer stops.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/StudyTimer.tsx",
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/StudyTimer.tsx",
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-17",
+        "summary": "Implement daily study goal setting functionality in the study timer, allowing users to set a target number of minutes for daily study.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/StudyGoalCard.tsx",
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/StudyGoalCard.tsx",
+          "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-18",
+        "summary": "Update the dashboard progress calculation to use actual chapter data: calculate percentage as (completed chapters / total chapters) × 100.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-19",
+        "summary": "Update the dashboard chapter statistics to display actual counts from user's chapters: total chapters, completed count, and pending count.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-20",
+        "summary": "Update the dashboard study time display to show the sum of all chapter study times from the user's actual chapter data.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Create a backend data model for chapters with fields: chapter name (text), status (enum: Pending or Completed), and accumulated study time in minutes (nat). Chapters must be stored persistently and never auto-delete.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Implement backend methods to add new chapters with user access control, ensuring each user can only create and access their own chapters.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "build-template/README.md",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/StudyGoalCard.tsx",
+    "frontend/src/components/StudyTimer.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/SyllabusTrackerPage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

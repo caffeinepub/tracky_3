@@ -1,0 +1,279 @@
+{
+  "kind": "build_request",
+  "title": "Add syllabus tracker with chapters and study timer functionality",
+  "projectName": "Tracky",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-8",
+      "text": "Create a backend data model for chapters with fields: chapter name (text), status (enum: Pending or Completed), and accumulated study time in minutes (nat). Chapters must be stored persistently and never auto-delete.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Each chapter has: - Chapter name - Status (Pending / Completed)",
+          "Chapters must NOT auto-delete",
+          "All data should be saved permanently"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Chapter data structure includes name, status, and study time fields",
+        "Status field supports only 'Pending' and 'Completed' values",
+        "Chapters persist across canister upgrades",
+        "No automatic deletion logic exists for chapters"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Implement backend methods to add new chapters with user access control, ensuring each user can only create and access their own chapters.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "User can manually add chapters"
+        ]
+      },
+      "acceptanceCriteria": [
+        "API method exists to create a new chapter with name and default Pending status",
+        "Method validates user authentication before creating chapter",
+        "Created chapters are associated with the authenticated user's profile",
+        "Users cannot access or create chapters for other users"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Implement backend methods to update chapter status between Pending and Completed, with user access control.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Status (Pending / Completed)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "API method exists to toggle or set chapter status",
+        "Method validates user owns the chapter before updating",
+        "Status changes persist to stable storage"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Implement backend methods to track and accumulate study time for individual chapters, storing time in minutes.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Track time separately for each subject/chapter"
+        ]
+      },
+      "acceptanceCriteria": [
+        "API method exists to add study time to a specific chapter",
+        "Study time is stored as minutes and accumulated correctly",
+        "Method validates user ownership before updating chapter time",
+        "Total study time on dashboard reflects sum of all chapter times"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Create a frontend page for the syllabus tracker that displays all user chapters in a list, showing chapter name, status badge, and individual study time for each chapter.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Syllabus Tracker: User can manually add chapters",
+          "Each chapter has: - Chapter name - Status (Pending / Completed)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Page displays a list of all user chapters",
+        "Each chapter shows name, status badge (Pending or Completed), and study time",
+        "Status uses color coding consistent with existing theme (sage for completed, terracotta for pending)",
+        "Empty state message shown when user has no chapters"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Add a form on the syllabus tracker page to manually create new chapters with a name input field and submit button.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "User can manually add chapters"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Form includes text input for chapter name",
+        "Submit button creates new chapter with Pending status",
+        "Form validates name is not empty before submission",
+        "Chapter list updates immediately after successful creation",
+        "Form clears after successful submission"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Add status toggle functionality on each chapter item to switch between Pending and Completed states.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Status (Pending / Completed)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each chapter has a clickable status badge or toggle control",
+        "Clicking toggles status between Pending and Completed",
+        "UI updates immediately to reflect new status",
+        "Status change persists to backend"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Create a study timer component with Start and Stop buttons that tracks elapsed time in real-time and displays it in minutes and seconds.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Start and Stop timer"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Timer displays elapsed time in MM:SS format",
+        "Start button begins timer and changes to Stop button",
+        "Stop button pauses timer and resets button to Start",
+        "Timer continues counting while active",
+        "Timer resets when stopped"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Add chapter selection to the study timer so users can associate timed study sessions with specific chapters, and save accumulated time to the selected chapter when timer stops.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Track time separately for each subject/chapter"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Timer component includes dropdown or selector to choose a chapter",
+        "Timer cannot start without selecting a chapter",
+        "When timer stops, elapsed time is added to selected chapter's study time",
+        "Chapter's study time updates in backend and reflects in UI",
+        "Timer resets after saving time to chapter"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Implement daily study goal setting functionality in the study timer, allowing users to set a target number of minutes for daily study.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Set daily study goal"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Input field exists to set daily study goal in minutes",
+        "Daily goal persists in user profile",
+        "Study timer shows progress toward daily goal",
+        "Visual indicator shows when daily goal is reached"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Update the dashboard progress calculation to use actual chapter data: calculate percentage as (completed chapters / total chapters) × 100.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Give progress report"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard progress percentage reflects real chapter completion data",
+        "Progress is 0% when no chapters exist",
+        "Progress is 100% when all chapters are completed",
+        "Progress updates immediately when chapter status changes"
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Update the dashboard chapter statistics to display actual counts from user's chapters: total chapters, completed count, and pending count.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Give progress report"
+        ]
+      },
+      "acceptanceCriteria": [
+        "ChapterStatsCard displays real completed chapter count",
+        "ChapterStatsCard displays real pending chapter count",
+        "Total chapter count equals completed + pending",
+        "Counts update immediately when chapters are added or status changes"
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "text": "Update the dashboard study time display to show the sum of all chapter study times from the user's actual chapter data.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Give progress report"
+        ]
+      },
+      "acceptanceCriteria": [
+        "StudyTimeCard displays total minutes accumulated across all chapters",
+        "Time is formatted using existing timeFormatters utility",
+        "Study time updates when timer adds time to any chapter",
+        "Study time is 0 when user has no chapters or no recorded time"
+      ]
+    }
+  ],
+  "constraints": [
+    "Maintain single-actor architecture in backend/main.mo",
+    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, components/ui",
+    "Preserve existing warm earth tone design theme (terracotta, sage green, cream)",
+    "Use React Query for all data fetching and mutations",
+    "Format time displays using existing timeFormatters utility"
+  ],
+  "nonGoals": [
+    "Subject/category grouping for chapters",
+    "Editing chapter names after creation",
+    "Deleting chapters",
+    "Exporting or importing chapter data",
+    "Calendar integration for study sessions",
+    "Notifications or reminders for study goals"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

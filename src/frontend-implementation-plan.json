@@ -1,0 +1,208 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add syllabus tracker with chapters and study timer functionality",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "summary": "Create syllabus tracker page displaying all user chapters with name, status badge, and individual study time",
+      "acceptanceCriteria": [
+        "Page displays a list of all user chapters",
+        "Each chapter shows name, status badge (Pending or Completed), and study time",
+        "Status uses color coding consistent with existing theme (sage for completed, terracotta for pending)",
+        "Empty state message shown when user has no chapters"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "operation": "create",
+          "description": "Create syllabus tracker page that fetches and displays all user chapters using React Query. Display each chapter with name, status badge (sage for completed, terracotta for pending), and study time formatted with timeFormatters utility. Include empty state when no chapters exist. Use authorization component to ensure only authenticated users can access this page."
+        },
+        {
+          "path": "frontend/src/components/ChapterListItem.tsx",
+          "operation": "create",
+          "description": "Create chapter list item component that displays individual chapter with name, color-coded status badge (sage green for Completed, terracotta for Pending), and formatted study time using timeFormatters utility. Component should match existing warm earth tone design theme."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add route for SyllabusTrackerPage at path '/syllabus' within the authenticated layout routes. Ensure route follows existing authentication and profile setup redirect pattern."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add navigation link to Syllabus Tracker page in header navigation. Place link between Dashboard and logout button for logical flow. Style consistently with existing header design."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Add form to create new chapters with name input and submit button",
+      "acceptanceCriteria": [
+        "Form includes text input for chapter name",
+        "Submit button creates new chapter with Pending status",
+        "Form validates name is not empty before submission",
+        "Chapter list updates immediately after successful creation",
+        "Form clears after successful submission"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "operation": "modify",
+          "description": "Add chapter creation form with text input and submit button. Implement validation to ensure name is not empty. Use React Query mutation to call backend addChapter method. Clear form and invalidate chapter list query after successful submission to update UI immediately."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useAddChapter mutation hook that calls backend addChapter method and invalidates chapter queries plus dashboard queries (progress, stats, total time) on success for immediate UI updates across all components."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Add status toggle functionality to switch chapters between Pending and Completed states",
+      "acceptanceCriteria": [
+        "Each chapter has a clickable status badge or toggle control",
+        "Clicking toggles status between Pending and Completed",
+        "UI updates immediately to reflect new status",
+        "Status change persists to backend"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/ChapterListItem.tsx",
+          "operation": "modify",
+          "description": "Add onClick handler to status badge that toggles chapter status between Pending and Completed. Use React Query mutation to call backend updateChapterStatus method. Update UI optimistically and invalidate chapter queries after successful mutation to reflect changes across dashboard and tracker."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useUpdateChapterStatus mutation hook that calls backend updateChapterStatus method and invalidates chapter queries plus dashboard queries (progress, stats) on success for immediate UI updates."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Create study timer component with Start/Stop buttons displaying elapsed time in MM:SS format",
+      "acceptanceCriteria": [
+        "Timer displays elapsed time in MM:SS format",
+        "Start button begins timer and changes to Stop button",
+        "Stop button pauses timer and resets button to Start",
+        "Timer continues counting while active",
+        "Timer resets when stopped"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/StudyTimer.tsx",
+          "operation": "create",
+          "description": "Create study timer component with Start/Stop toggle button. Use React state and useEffect with setInterval to track elapsed seconds. Display time in MM:SS format. Start button begins timer and changes label to Stop. Stop button pauses timer, resets elapsed time to zero, and changes label back to Start. Style with warm earth tone theme."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Add chapter selection to study timer and save accumulated time to selected chapter when timer stops",
+      "acceptanceCriteria": [
+        "Timer component includes dropdown or selector to choose a chapter",
+        "Timer cannot start without selecting a chapter",
+        "When timer stops, elapsed time is added to selected chapter's study time",
+        "Chapter's study time updates in backend and reflects in UI",
+        "Timer resets after saving time to chapter"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/StudyTimer.tsx",
+          "operation": "modify",
+          "description": "Add chapter selection dropdown that fetches user chapters. Disable Start button when no chapter is selected. When Stop is clicked, convert elapsed seconds to minutes and use React Query mutation to call backend addStudyTimeToChapter method with selected chapter name and calculated minutes. Invalidate chapter queries and dashboard queries after successful save to update all displays. Reset timer and clear selection after save."
+        },
+        {
+          "path": "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "operation": "modify",
+          "description": "Add StudyTimer component to syllabus tracker page, positioned above or alongside chapter list for easy access during study sessions."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useAddStudyTime mutation hook that calls backend addStudyTimeToChapter method and invalidates chapter queries plus dashboard queries (total time, stats) on success for immediate UI updates."
+        }
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "summary": "Add daily study goal setting functionality with input field and progress indicator",
+      "acceptanceCriteria": [
+        "Input field exists to set daily study goal in minutes",
+        "Daily goal persists in user profile",
+        "Study timer shows progress toward daily goal",
+        "Visual indicator shows when daily goal is reached"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/StudyGoalCard.tsx",
+          "operation": "create",
+          "description": "Create study goal card component with input field to set daily study goal in minutes. Fetch current goal using React Query from backend getDailyStudyGoal method. Use mutation to call backend setDailyStudyGoal method when user updates goal. Display progress bar showing total study time vs daily goal, with visual indicator (color change or checkmark) when goal is reached. Style with warm earth tones."
+        },
+        {
+          "path": "frontend/src/pages/SyllabusTrackerPage.tsx",
+          "operation": "modify",
+          "description": "Add StudyGoalCard component to syllabus tracker page, positioned near StudyTimer for contextual awareness of daily progress."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useGetDailyGoal query hook that calls backend getDailyStudyGoal method and useSetDailyGoal mutation hook that calls backend setDailyStudyGoal method. Mutation should invalidate daily goal query on success."
+        }
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "summary": "Update dashboard progress calculation to use real chapter data (completed/total × 100)",
+      "acceptanceCriteria": [
+        "Dashboard progress percentage reflects real chapter completion data",
+        "Progress is 0% when no chapters exist",
+        "Progress is 100% when all chapters are completed",
+        "Progress updates immediately when chapter status changes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Replace mock data in useGetDashboardProgress hook with actual backend call to getDashboardProgress method. Ensure query is invalidated when chapter status changes so progress updates immediately."
+        }
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "summary": "Update dashboard chapter statistics to display actual counts from user's chapters",
+      "acceptanceCriteria": [
+        "ChapterStatsCard displays real completed chapter count",
+        "ChapterStatsCard displays real pending chapter count",
+        "Total chapter count equals completed + pending",
+        "Counts update immediately when chapters are added or status changes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Replace mock data in useGetChapterStats hook with actual backend call to getChapterStats method which returns [total, completed, pending] tuple. Ensure query is invalidated when chapters are added or status changes so counts update immediately."
+        }
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "summary": "Update dashboard study time display to show sum of all chapter study times",
+      "acceptanceCriteria": [
+        "StudyTimeCard displays total minutes accumulated across all chapters",
+        "Time is formatted using existing timeFormatters utility",
+        "Study time updates when timer adds time to any chapter",
+        "Study time is 0 when user has no chapters or no recorded time"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Replace mock data in useGetTotalStudyTime hook with actual backend call to getTotalStudyTime method. Ensure query is invalidated when study time is added to any chapter so StudyTimeCard updates immediately. Time continues to be formatted with existing timeFormatters utility in StudyTimeCard component."
+        }
+      ]
+    }
+  ]
+}

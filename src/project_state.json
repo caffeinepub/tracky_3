@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with user authentication",
+  "architectural_notes": [
+    "User authentication required with email/password",
+    "Database must enforce per-user data isolation",
+    "Dashboard aggregates data from syllabus and study tracking",
+    "Chapters must persist permanently and never auto-delete",
+    "Study time tracked individually per chapter with timer functionality"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-user-sign-up-functionality-with-email-and-password-authentication",
+      "title": "Implement user sign up functionality with email and password authentication",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-user-login-functionality-with-email-and-password-authentication",
+      "title": "Implement user login functionality with email and password authentication",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-dashboard-page-that-displays-the-user-s-total-syllabus-progress-as-a-percentage",
+      "title": "Create a dashboard page that displays the user's total syllabus progress as a percentage",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-total-accumulated-study-time-on-the-dashboard",
+      "title": "Display total accumulated study time on the dashboard",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-counts-of-completed-and-pending-chapters-on-the-dashboard",
+      "title": "Display counts of completed and pending chapters on the dashboard",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-a-clean-modern-dashboard-interface-with-a-cohesive-visual-theme-using-warm-earth-tones-terracotta-sage-green-cream-with-rounded-components-and-subtle-shadows-for-depth",
+      "title": "Design a clean, modern dashboard interface with a cohesive visual theme using warm earth tones (terracotta, sage green, cream) with rounded components and subtle shadows for depth",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-frontend-page-for-the-syllabus-tracker-that-displays-all-user-chapters-in-a-list-showing-chapter-name-status-badge-and-individual-study-time-for-each-chapter",
+      "title": "Create a frontend page for the syllabus tracker that displays all user chapters in a list, showing chapter name, status badge, and individual study time for each chapter.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-form-on-the-syllabus-tracker-page-to-manually-create-new-chapters-with-a-name-input-field-and-submit-button",
+      "title": "Add a form on the syllabus tracker page to manually create new chapters with a name input field and submit button.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-status-toggle-functionality-on-each-chapter-item-to-switch-between-pending-and-completed-states",
+      "title": "Add status toggle functionality on each chapter item to switch between Pending and Completed states.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-study-timer-component-with-start-and-stop-buttons-that-tracks-elapsed-time-in-real-time-and-displays-it-in-minutes-and-seconds",
+      "title": "Create a study timer component with Start and Stop buttons that tracks elapsed time in real-time and displays it in minutes and seconds.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-chapter-selection-to-the-study-timer-so-users-can-associate-timed-study-sessions-with-specific-chapters-and-save-accumulated-time-to-the-selected-chapter-when-timer-stops",
+      "title": "Add chapter selection to the study timer so users can associate timed study sessions with specific chapters, and save accumulated time to the selected chapter when timer stops.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-daily-study-goal-setting-functionality-in-the-study-timer-allowing-users-to-set-a-target-number-of-minutes-for-daily-study",
+      "title": "Implement daily study goal setting functionality in the study timer, allowing users to set a target number of minutes for daily study.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-dashboard-progress-calculation-to-use-actual-chapter-data-calculate-percentage-as-completed-chapters-total-chapters-100",
+      "title": "Update the dashboard progress calculation to use actual chapter data: calculate percentage as (completed chapters / total chapters) × 100.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-dashboard-chapter-statistics-to-display-actual-counts-from-user-s-chapters-total-chapters-completed-count-and-pending-count",
+      "title": "Update the dashboard chapter statistics to display actual counts from user's chapters: total chapters, completed count, and pending count.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-dashboard-study-time-display-to-show-the-sum-of-all-chapter-study-times-from-the-user-s-actual-chapter-data",
+      "title": "Update the dashboard study time display to show the sum of all chapter study times from the user's actual chapter data.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "User authentication with email/password sign up and login",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Separate private data storage per user",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Dashboard showing syllabus progress percentage",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Dashboard showing total study time",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Dashboard showing completed and pending chapters count",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Implement strict data isolation ensuring each user can only access their own private data",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Syllabus tracker with manual chapter creation (name, status: Pending/Completed, permanent storage)",
+      "reqIds": [
+        "AR-1",
+        "AR-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Study timer with start/stop, daily goal setting, and per-chapter time tracking",
+      "reqIds": [
+        "AR-1",
+        "AR-2",
+        "AR-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Create a backend data model for chapters with fields: chapter name (text), status (enum: Pending or Completed), and accumulated study time in minutes (nat). Chapters must be stored persistently and never auto-delete.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Implement backend methods to add new chapters with user access control, ensuring each user can only create and access their own chapters.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Implement backend methods to update chapter status between Pending and Completed, with user access control.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Implement backend methods to track and accumulate study time for individual chapters, storing time in minutes.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Tracky",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
