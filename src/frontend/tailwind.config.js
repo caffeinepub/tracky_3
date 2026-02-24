@@ -66,9 +66,8 @@ export default {
                     border: 'oklch(var(--sidebar-border))',
                     ring: 'oklch(var(--sidebar-ring))'
                 },
-                terracotta: 'oklch(var(--terracotta) / <alpha-value>)',
-                sage: 'oklch(var(--sage) / <alpha-value>)',
-                cream: 'oklch(var(--cream) / <alpha-value>)'
+                blue: 'oklch(var(--blue) / <alpha-value>)',
+                'light-blue': 'oklch(var(--light-blue) / <alpha-value>)'
             },
             borderRadius: {
                 lg: 'var(--radius)',

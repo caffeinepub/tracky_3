@@ -3,6 +3,7 @@ import StudyTimeCard from '../components/StudyTimeCard';
 import ChapterStatsCard from '../components/ChapterStatsCard';
 import ProgressReport from '../components/ProgressReport';
 import MotivationalQuote from '../components/MotivationalQuote';
+import DashboardStopwatch from '../components/DashboardStopwatch';
 import { useGetDashboardProgress, useGetChapterStats, useGetTotalStudyTime } from '../hooks/useQueries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
@@ -63,6 +64,8 @@ export default function DashboardPage() {
         <StudyTimeCard totalMinutes={studyMinutes} />
         <ChapterStatsCard completedCount={stats.completed} pendingCount={stats.pending} />
       </div>
+
+      <DashboardStopwatch />
 
       {stats.total === 0 && (
         <Alert className="bg-sage/10 border-sage">

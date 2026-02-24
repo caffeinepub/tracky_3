@@ -1,14 +1,12 @@
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useOTPAuth } from '../hooks/useOTPAuth';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { BookOpen, LogOut, LayoutDashboard, ListChecks, FolderOpen } from 'lucide-react';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { clear, identity } = useInternetIdentity();
+  const { clear, mobileNumber } = useOTPAuth();
   const queryClient = useQueryClient();
-  const { data: userProfile } = useGetCallerUserProfile();
   const navigate = useNavigate();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
@@ -16,25 +14,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const handleLogout = async () => {
     await clear();
     queryClient.clear();
+    navigate({ to: '/login' });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream via-background to-sage/5">
-      <header className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+      <header className="border-b border-blue-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-terracotta/20">
-                  <BookOpen className="w-5 h-5 text-terracotta" />
-                </div>
+                <img 
+                  src="/assets/generated/tracky-logo.dim_256x256.png" 
+                  alt="Tracky Logo" 
+                  className="w-10 h-10 rounded-lg"
+                />
                 <div>
-                  <h1 className="text-xl font-bold text-foreground">Tracky</h1>
-                  {userProfile && <p className="text-xs text-muted-foreground">{userProfile.email}</p>}
+                  <h1 className="text-xl font-bold text-gray-900">Tracky</h1>
+                  {mobileNumber && <p className="text-xs text-gray-600">+91 {mobileNumber}</p>}
                 </div>
               </div>
 
-              {identity && (
+              {mobileNumber && (
                 <nav className="hidden md:flex items-center gap-2">
                   <Button
                     variant={currentPath === '/dashboard' ? 'default' : 'ghost'}
@@ -67,7 +68,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               )}
             </div>
 
-            {identity && (
+            {mobileNumber && (
               <Button onClick={handleLogout} variant="outline" size="sm" className="gap-2">
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -75,7 +76,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             )}
           </div>
 
-          {identity && (
+          {mobileNumber && (
             <nav className="md:hidden flex items-center gap-2 mt-4">
               <Button
                 variant={currentPath === '/dashboard' ? 'default' : 'ghost'}
@@ -111,9 +112,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <main className="container mx-auto px-4 py-8">{children}</main>
 
-      <footer className="border-t border-border/40 bg-background/50 mt-16">
+      <footer className="border-t border-blue-200 bg-white/50 mt-16">
         <div className="container mx-auto px-4 py-6">
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-sm text-gray-600">
             <p>
               © {new Date().getFullYear()} Tracky. Built with ❤️ using{' '}
               <a
@@ -122,7 +123,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-terracotta hover:underline"
+                className="text-blue-600 hover:underline"
               >
                 caffeine.ai
               </a>

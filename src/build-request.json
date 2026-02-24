@@ -1,81 +1,311 @@
 {
   "kind": "build_request",
-  "title": "Add pause/resume to study timer and daily motivational quote to dashboard",
+  "title": "Replace Internet Identity with OTP-based mobile authentication and redesign login/signup UI",
   "projectName": "Tracky",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-33",
-      "text": "Update the StudyTimer component to add pause and resume functionality: add a Pause button that appears when timer is running, and a Resume button that appears when timer is paused, preserving elapsed time across pause/resume cycles",
-      "target": "frontend",
+      "id": "REQ-45",
+      "text": "Remove Internet Identity authentication system and replace with OTP-based mobile number authentication backend logic",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-latest"
         ],
         "quotes": [
-          "Start and pause / resume Stop timer"
+          "Replace current authentication with OTP-based mobile number authentication",
+          "Secure authentication with OTP"
         ]
       },
       "acceptanceCriteria": [
-        "When timer is running, a Pause button is visible",
-        "Clicking Pause stops the timer but preserves elapsed time",
-        "When timer is paused, a Resume button is visible",
-        "Clicking Resume continues counting from the paused elapsed time",
-        "Stop button remains available to end the session and save time"
+        "Backend accepts mobile number (10 digits) and generates a 6-digit OTP",
+        "Backend stores OTP temporarily with expiration time for verification",
+        "Backend provides method to verify OTP and authenticate user",
+        "Each mobile number maps to a unique user account",
+        "Authentication tokens or session management is implemented for authenticated users"
       ]
     },
     {
-      "id": "REQ-34",
-      "text": "Ensure the StudyTimer component tracks study time separately for each selected subject/chapter, maintaining accurate time accumulation per chapter when timer stops",
-      "target": "frontend",
+      "id": "REQ-46",
+      "text": "Update backend user profile model to store mobile number (10 digits) as the primary identifier instead of Internet Identity principal",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-latest"
         ],
         "quotes": [
-          "Track time separately for each subject/chapter"
+          "Each mobile number creates a unique account",
+          "Store user data separately in database"
         ]
       },
       "acceptanceCriteria": [
-        "Timer only runs when a chapter is selected",
-        "Accumulated time is saved to the correct chapter when Stop is clicked",
-        "Switching chapters resets the timer display",
-        "Each chapter maintains its own separate accumulated study time"
+        "User profile includes mobile number field (10-digit string)",
+        "User profile includes Full Name field (text)",
+        "User profile includes Class/Course field (text)",
+        "Mobile number is unique and serves as primary user identifier",
+        "All existing user data relationships (subjects, chapters, study sessions) are linked to mobile number"
       ]
     },
     {
-      "id": "REQ-35",
-      "text": "Add a motivational quote display component to the dashboard that shows a different inspirational quote each day, placed prominently near the top of the dashboard page",
-      "target": "frontend",
+      "id": "REQ-47",
+      "text": "Implement backend method to send OTP to mobile number (placeholder/mock implementation for OTP delivery)",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-latest"
         ],
         "quotes": [
-          "add feature in dashboard daily motivational quote"
+          "Button: \"Send OTP\""
         ]
       },
       "acceptanceCriteria": [
-        "A quote card is visible on the dashboard",
-        "The quote changes daily based on the current date",
-        "The quote is displayed in a visually appealing format consistent with the warm earth-tone design theme",
-        "A collection of at least 10-15 motivational quotes is available for rotation"
+        "Backend method accepts 10-digit mobile number",
+        "Method generates random 6-digit OTP",
+        "OTP is stored with mobile number and timestamp for verification",
+        "Method returns success status (actual SMS sending can be mocked)",
+        "OTP expires after a reasonable time (e.g., 5 minutes)"
+      ]
+    },
+    {
+      "id": "REQ-48",
+      "text": "Implement backend method to verify OTP and create authenticated session",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Button: \"Verify & Login\"",
+          "OTP verification screen after clicking Send OTP"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend method accepts mobile number and 6-digit OTP",
+        "Method validates OTP matches stored value and is not expired",
+        "Method returns authentication token or session identifier on success",
+        "Method returns error if OTP is invalid or expired",
+        "Failed verification attempts are tracked to prevent brute force"
+      ]
+    },
+    {
+      "id": "REQ-49",
+      "text": "Implement backend method to check if mobile number is registered and handle new user signup flow",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "If mobile number not registered, show: Input field: Full Name, Input field: Class / Course, Button: \"Create Account\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend method checks if mobile number exists in user database",
+        "Method returns registration status (registered or new user)",
+        "For new users, backend accepts Full Name and Class/Course during signup",
+        "New user profile is created with mobile number, name, and class/course",
+        "Signup method returns authentication token for immediate login"
+      ]
+    },
+    {
+      "id": "REQ-50",
+      "text": "Replace frontend Internet Identity login with mobile number OTP login UI on LoginPage",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Login Section: Input field: Mobile Number (10 digits, numeric only), Button: \"Send OTP\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "LoginPage displays mobile number input field (numeric only, max 10 digits)",
+        "LoginPage includes \"Send OTP\" button",
+        "Mobile number input validates 10-digit format before enabling Send OTP button",
+        "Clicking Send OTP calls backend to generate and send OTP",
+        "Loading state is shown while OTP is being sent"
+      ]
+    },
+    {
+      "id": "REQ-51",
+      "text": "Create OTP verification screen that appears after Send OTP is clicked, with 6-digit OTP input and Verify & Login button",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "OTP verification screen after clicking Send OTP, Input field: Enter 6-digit OTP, Button: \"Verify & Login\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "After Send OTP succeeds, LoginPage transitions to OTP verification screen",
+        "Screen displays 6-digit OTP input field (numeric only)",
+        "Screen includes \"Verify & Login\" button",
+        "Clicking Verify & Login calls backend to verify OTP",
+        "Loading animation is shown during verification",
+        "On successful verification, user is redirected to Dashboard or Signup flow"
+      ]
+    },
+    {
+      "id": "REQ-52",
+      "text": "Create signup form UI for new users that collects Full Name and Class/Course after OTP verification",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Signup (if new user): If mobile number not registered, show: Input field: Full Name, Input field: Class / Course, Button: \"Create Account\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "If backend indicates mobile number is not registered after OTP verification, show signup form",
+        "Form includes Full Name input field (text)",
+        "Form includes Class/Course input field (text)",
+        "Form includes \"Create Account\" button",
+        "Clicking Create Account submits data to backend and creates user profile",
+        "After account creation, user is redirected to Dashboard"
+      ]
+    },
+    {
+      "id": "REQ-53",
+      "text": "Redesign LoginPage UI with light theme (white + blue color combination), app logo at top, title \"Welcome to Tracky\", and subtitle \"Track your syllabus smartly\"",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Design: Simple student-friendly UI, Light theme (white + blue color combination), App logo at the top, Title: \"Welcome to Tracky\", Subtitle: \"Track your syllabus smartly\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "LoginPage uses white background with blue accent colors",
+        "App logo is displayed at the top center of the page",
+        "Title \"Welcome to Tracky\" is prominently displayed below logo",
+        "Subtitle \"Track your syllabus smartly\" is shown below title",
+        "Overall design is clean, minimal, and student-friendly",
+        "UI is fully mobile responsive"
+      ]
+    },
+    {
+      "id": "REQ-54",
+      "text": "Update Layout component logout functionality to work with new OTP authentication system and clear authentication session",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Add logout option in dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Logout button in Layout component clears OTP authentication session",
+        "Logout clears any authentication tokens or session data stored in browser",
+        "After logout, user is redirected to LoginPage",
+        "Logged out users cannot access protected routes without re-authenticating"
+      ]
+    },
+    {
+      "id": "REQ-55",
+      "text": "Remove or deprecate useInternetIdentity hook and replace with OTP authentication hook throughout the application",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Replace current authentication with OTP-based mobile number authentication"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Create new authentication hook for OTP-based auth (e.g., useOTPAuth)",
+        "Replace all useInternetIdentity imports and usage with new OTP auth hook",
+        "Authentication state (logged in/out) is managed via new hook",
+        "Protected routes check OTP authentication status instead of Internet Identity"
+      ]
+    },
+    {
+      "id": "REQ-56",
+      "text": "Update useActor hook to initialize backend actor with OTP authentication token instead of Internet Identity delegation",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Store user data separately in database"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useActor hook retrieves authentication token from OTP auth context",
+        "Backend actor is initialized with OTP authentication token",
+        "Actor requests include authentication credentials for access control",
+        "Hook invalidates queries when authentication state changes"
+      ]
+    },
+    {
+      "id": "REQ-57",
+      "text": "Remove ProfileSetupPage component as user profile setup is now handled during signup flow",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "Signup (if new user): If mobile number not registered, show: Input field: Full Name, Input field: Class / Course"
+        ]
+      },
+      "acceptanceCriteria": [
+        "ProfileSetupPage route is removed from App.tsx",
+        "Profile setup logic (Full Name, Class/Course) is integrated into signup flow on LoginPage",
+        "Navigation no longer redirects to separate profile setup page",
+        "Users complete profile during initial signup immediately after OTP verification"
+      ]
+    },
+    {
+      "id": "REQ-58",
+      "text": "Update App.tsx route protection logic to check OTP authentication status and redirect unauthenticated users to LoginPage",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "After login, redirect to Dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Protected routes check if user is authenticated via OTP system",
+        "Unauthenticated users are redirected to LoginPage",
+        "Authenticated users can access Dashboard, Subjects, and Syllabus Tracker pages",
+        "After successful login or signup, user is automatically redirected to Dashboard"
       ]
     }
   ],
   "constraints": [
-    "Do not modify backend/main.mo for the timer pause/resume functionality as it only requires frontend state management",
-    "Do not modify files in frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, or frontend/src/main.tsx",
-    "Maintain the existing warm earth-tone color palette (terracotta, sage green, cream) for the motivational quote component"
+    "Do not modify backend/main.mo actor structure; maintain single-actor architecture",
+    "Do not edit frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts directly; create new authentication hooks instead",
+    "Do not edit frontend/src/components/ui components; use them as-is or compose with them",
+    "Maintain existing user data relationships (subjects, chapters, study sessions) during authentication migration",
+    "Preserve all existing features and functionality except Internet Identity authentication"
   ],
   "nonGoals": [
-    "Fetching motivational quotes from external APIs",
-    "Adding user customization for quote preferences",
-    "Implementing quote sharing or social features",
-    "Modifying the daily study goal setting functionality (already exists)"
+    "Actual SMS gateway integration for sending OTPs (use mock/placeholder implementation)",
+    "Two-factor authentication or additional security layers beyond OTP",
+    "Password-based authentication",
+    "Social media login integration",
+    "Email-based authentication",
+    "Phone number verification beyond OTP",
+    "Internationalization of phone number formats (only 10-digit Indian format)"
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Tracky app logo illustration with modern student-friendly design incorporating book and checkmark elements in blue color scheme (tracky-logo.dim_256x256.png)"
+    ],
     "edits": []
   }
 }

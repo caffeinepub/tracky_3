@@ -6,90 +6,88 @@
     :root {
         --radius: 0.75rem;
         
-        /* Warm earth tone palette - Light mode */
-        --background: 0.98 0.01 60;
-        --foreground: 0.25 0.02 30;
+        /* Clean blue and white theme - Light mode */
+        --background: 1 0 0;
+        --foreground: 0.20 0.02 240;
         
         --card: 1 0 0;
-        --card-foreground: 0.25 0.02 30;
+        --card-foreground: 0.20 0.02 240;
         
         --popover: 1 0 0;
-        --popover-foreground: 0.25 0.02 30;
+        --popover-foreground: 0.20 0.02 240;
         
-        /* Terracotta primary */
-        --primary: 0.62 0.15 35;
-        --primary-foreground: 0.98 0.01 60;
+        /* Blue primary */
+        --primary: 0.55 0.20 240;
+        --primary-foreground: 1 0 0;
         
-        /* Sage green secondary */
-        --secondary: 0.72 0.08 140;
-        --secondary-foreground: 0.25 0.02 30;
+        /* Light blue secondary */
+        --secondary: 0.92 0.05 240;
+        --secondary-foreground: 0.20 0.02 240;
         
-        --muted: 0.95 0.01 60;
-        --muted-foreground: 0.55 0.02 30;
+        --muted: 0.96 0.01 240;
+        --muted-foreground: 0.50 0.02 240;
         
-        --accent: 0.72 0.08 140;
-        --accent-foreground: 0.25 0.02 30;
+        --accent: 0.92 0.05 240;
+        --accent-foreground: 0.20 0.02 240;
         
         --destructive: 0.577 0.245 27.325;
         --destructive-foreground: 0.985 0 0;
         
-        --border: 0.90 0.01 60;
-        --input: 0.90 0.01 60;
-        --ring: 0.62 0.15 35;
+        --border: 0.92 0.02 240;
+        --input: 0.92 0.02 240;
+        --ring: 0.55 0.20 240;
         
         /* Custom colors */
-        --terracotta: 0.62 0.15 35;
-        --sage: 0.72 0.08 140;
-        --cream: 0.96 0.02 60;
+        --blue: 0.55 0.20 240;
+        --light-blue: 0.92 0.05 240;
         
-        --chart-1: 0.62 0.15 35;
-        --chart-2: 0.72 0.08 140;
-        --chart-3: 0.80 0.12 50;
-        --chart-4: 0.55 0.10 200;
-        --chart-5: 0.70 0.15 320;
+        --chart-1: 0.55 0.20 240;
+        --chart-2: 0.65 0.15 220;
+        --chart-3: 0.60 0.18 260;
+        --chart-4: 0.70 0.12 200;
+        --chart-5: 0.50 0.22 280;
     }
 
     .dark {
-        --background: 0.20 0.02 30;
-        --foreground: 0.95 0.01 60;
+        --background: 0.15 0.02 240;
+        --foreground: 0.95 0.01 240;
         
-        --card: 0.25 0.02 30;
-        --card-foreground: 0.95 0.01 60;
+        --card: 0.20 0.02 240;
+        --card-foreground: 0.95 0.01 240;
         
-        --popover: 0.25 0.02 30;
-        --popover-foreground: 0.95 0.01 60;
+        --popover: 0.20 0.02 240;
+        --popover-foreground: 0.95 0.01 240;
         
-        /* Lighter terracotta for dark mode */
-        --primary: 0.70 0.15 35;
-        --primary-foreground: 0.20 0.02 30;
+        /* Lighter blue for dark mode */
+        --primary: 0.65 0.18 240;
+        --primary-foreground: 0.15 0.02 240;
         
-        /* Lighter sage for dark mode */
-        --secondary: 0.65 0.08 140;
-        --secondary-foreground: 0.95 0.01 60;
+        /* Lighter blue secondary for dark mode */
+        --secondary: 0.30 0.05 240;
+        --secondary-foreground: 0.95 0.01 240;
         
-        --muted: 0.30 0.02 30;
-        --muted-foreground: 0.65 0.02 60;
+        --muted: 0.25 0.02 240;
+        --muted-foreground: 0.70 0.02 240;
         
-        --accent: 0.65 0.08 140;
-        --accent-foreground: 0.95 0.01 60;
+        --accent: 0.30 0.05 240;
+        --accent-foreground: 0.95 0.01 240;
         
         --destructive: 0.65 0.20 27;
-        --destructive-foreground: 0.95 0.01 60;
+        --destructive-foreground: 0.95 0.01 240;
         
-        --border: 0.35 0.02 30;
-        --input: 0.35 0.02 30;
-        --ring: 0.70 0.15 35;
+        --border: 0.30 0.02 240;
+        --input: 0.30 0.02 240;
+        --ring: 0.65 0.18 240;
         
         /* Custom colors for dark mode */
-        --terracotta: 0.70 0.15 35;
-        --sage: 0.65 0.08 140;
-        --cream: 0.30 0.02 60;
+        --blue: 0.65 0.18 240;
+        --light-blue: 0.30 0.05 240;
         
-        --chart-1: 0.70 0.15 35;
-        --chart-2: 0.65 0.08 140;
-        --chart-3: 0.75 0.12 50;
-        --chart-4: 0.60 0.10 200;
-        --chart-5: 0.65 0.15 320;
+        --chart-1: 0.65 0.18 240;
+        --chart-2: 0.70 0.15 220;
+        --chart-3: 0.68 0.16 260;
+        --chart-4: 0.75 0.12 200;
+        --chart-5: 0.60 0.20 280;
     }
 
     * {

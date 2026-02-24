@@ -3,18 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Play, Square, Clock, AlertCircle, Pause } from 'lucide-react';
-import { useAddStudyTime } from '../hooks/useQueries';
+import { useAddStudyTimeToChapter } from '../hooks/useQueries';
 
 interface StudyTimerProps {
   selectedChapter?: string | null;
+  subjectId?: bigint | null;
 }
 
-export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
+export default function StudyTimer({ selectedChapter, subjectId }: StudyTimerProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const addStudyTimeMutation = useAddStudyTime();
+  const addStudyTimeMutation = useAddStudyTimeToChapter();
 
   // Reset timer when selected chapter changes
   useEffect(() => {
@@ -63,12 +64,13 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
     setIsRunning(false);
     setIsPaused(false);
 
-    if (elapsedSeconds > 0 && selectedChapter?.trim()) {
+    if (elapsedSeconds > 0 && selectedChapter?.trim() && subjectId !== null && subjectId !== undefined) {
       const minutes = Math.ceil(elapsedSeconds / 60);
       try {
         await addStudyTimeMutation.mutateAsync({
           chapterName: selectedChapter.trim(),
           minutes,
+          subjectId,
         });
         setElapsedSeconds(0);
         setStartTime(null);
@@ -91,7 +93,7 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
     <Card className="shadow-soft">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Clock className="w-5 h-5 text-terracotta" />
+          <Clock className="w-5 h-5 text-blue-600" />
           Study Timer
         </CardTitle>
       </CardHeader>
@@ -105,7 +107,7 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
         </div>
 
         {!selectedChapter && !isRunning && (
-          <Alert className="bg-cream/50 border-border">
+          <Alert className="bg-blue-50 border-blue-200">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
               Select a chapter from the list below to start tracking time.
@@ -118,7 +120,7 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
             <Button
               onClick={handleStart}
               disabled={!selectedChapter?.trim()}
-              className="flex-1 gap-2 bg-sage hover:bg-sage/90"
+              className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700"
             >
               <Play className="w-4 h-4" />
               Start
@@ -127,7 +129,7 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
             <>
               <Button
                 onClick={handleResume}
-                className="flex-1 gap-2 bg-sage hover:bg-sage/90"
+                className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700"
               >
                 <Play className="w-4 h-4" />
                 Resume
@@ -135,7 +137,7 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
               <Button
                 onClick={handleStop}
                 disabled={addStudyTimeMutation.isPending}
-                className="flex-1 gap-2 bg-terracotta hover:bg-terracotta/90"
+                className="flex-1 gap-2 bg-red-600 hover:bg-red-700"
               >
                 <Square className="w-4 h-4" />
                 {addStudyTimeMutation.isPending ? 'Saving...' : 'Stop'}
@@ -153,7 +155,7 @@ export default function StudyTimer({ selectedChapter }: StudyTimerProps) {
               <Button
                 onClick={handleStop}
                 disabled={addStudyTimeMutation.isPending}
-                className="flex-1 gap-2 bg-terracotta hover:bg-terracotta/90"
+                className="flex-1 gap-2 bg-red-600 hover:bg-red-700"
               >
                 <Square className="w-4 h-4" />
                 {addStudyTimeMutation.isPending ? 'Saving...' : 'Stop'}

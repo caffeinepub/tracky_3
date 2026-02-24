@@ -18,9 +18,11 @@ export interface Chapter {
 }
 export type ChapterStatus = { 'pending' : null } |
   { 'completed' : null };
+export type MobileNumber = bigint;
+export type OTP = bigint;
 export interface Subject { 'id' : bigint, 'name' : string, 'createdAt' : Time }
 export type Time = bigint;
-export interface UserProfile { 'email' : string }
+export interface UserProfile { 'mobileNumber' : MobileNumber }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -29,7 +31,9 @@ export interface _SERVICE {
   'addChapter' : ActorMethod<[string, bigint], undefined>,
   'addStudyTimeToChapter' : ActorMethod<[string, bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createProfile' : ActorMethod<[MobileNumber], undefined>,
   'createSubject' : ActorMethod<[string], bigint>,
+  'getAverageStudyTimePerDay' : ActorMethod<[], bigint>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getChapterStats' : ActorMethod<[], [bigint, bigint, bigint]>,
@@ -41,9 +45,13 @@ export interface _SERVICE {
   'getTotalStudyTime' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isRegistered' : ActorMethod<[MobileNumber], boolean>,
+  'recordStudySession' : ActorMethod<[bigint], undefined>,
+  'requestOtp' : ActorMethod<[string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'setDailyStudyGoal' : ActorMethod<[bigint], undefined>,
   'updateChapterStatus' : ActorMethod<[string, ChapterStatus], undefined>,
+  'verifyOtp' : ActorMethod<[string, OTP], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

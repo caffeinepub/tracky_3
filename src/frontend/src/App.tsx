@@ -1,8 +1,7 @@
 import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet, Navigate } from '@tanstack/react-router';
-import { useInternetIdentity } from './hooks/useInternetIdentity';
+import { useOTPAuth } from './hooks/useOTPAuth';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import ProfileSetupPage from './pages/ProfileSetupPage';
 import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
 import SubjectsPage from './pages/SubjectsPage';
 import Layout from './components/Layout';
@@ -10,27 +9,35 @@ import { useGetCallerUserProfile } from './hooks/useQueries';
 
 // Protected route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { identity, isInitializing } = useInternetIdentity();
+  const { isAuthenticated, isInitializing } = useOTPAuth();
   const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
 
-  if (isInitializing || profileLoading) {
+  if (isInitializing || (isAuthenticated && profileLoading)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
-  if (!identity) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  // Show profile setup if user is authenticated but has no profile
+  // If authenticated but no profile exists, create one automatically
+  // The backend will handle profile creation during signup flow
   if (isFetched && userProfile === null) {
-    return <Navigate to="/setup-profile" />;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Setting up your profile...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
@@ -38,8 +45,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 // Root layout component
 function RootLayout() {
-  const { identity } = useInternetIdentity();
-  const isAuthenticated = !!identity;
+  const { isAuthenticated } = useOTPAuth();
 
   if (isAuthenticated) {
     return (
@@ -54,17 +60,17 @@ function RootLayout() {
 
 // Index redirect component
 function IndexRedirect() {
-  const { identity, isInitializing } = useInternetIdentity();
+  const { isAuthenticated, isInitializing } = useOTPAuth();
 
   if (isInitializing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (identity) {
+  if (isAuthenticated) {
     return <Navigate to="/dashboard" />;
   }
 
@@ -110,12 +116,6 @@ const loginRoute = createRoute({
   component: LoginPage,
 });
 
-const setupProfileRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/setup-profile',
-  component: ProfileSetupPage,
-});
-
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/dashboard',
@@ -144,7 +144,6 @@ const indexRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
-  setupProfileRoute,
   dashboardRoute,
   syllabusRoute,
   subjectsRoute,

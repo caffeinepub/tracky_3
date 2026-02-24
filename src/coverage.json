@@ -1,62 +1,182 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T23:45:15.617Z",
+  "generatedAt": "2026-02-24T00:45:28.419Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 14,
+    "implemented": 8,
     "items": [
       {
-        "id": "REQ-33",
-        "summary": "Update the StudyTimer component to add pause and resume functionality: add a Pause button that appears when timer is running, and a Resume button that appears when timer is paused, preserving elapsed time across pause/resume cycles",
+        "id": "REQ-45",
+        "summary": "Remove Internet Identity authentication system and replace with OTP-based mobile number authentication backend logic",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-46",
+        "summary": "Update backend user profile model to store mobile number (10 digits) as the primary identifier instead of Internet Identity principal",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-47",
+        "summary": "Implement backend method to send OTP to mobile number (placeholder/mock implementation for OTP delivery)",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-48",
+        "summary": "Implement backend method to verify OTP and create authenticated session",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-49",
+        "summary": "Implement backend method to check if mobile number is registered and handle new user signup flow",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-50",
+        "summary": "Replace frontend Internet Identity login with mobile number OTP login UI on LoginPage",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/StudyTimer.tsx"
+          "frontend/src/pages/LoginPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/StudyTimer.tsx"
+          "frontend/src/pages/LoginPage.tsx"
         ]
       },
       {
-        "id": "REQ-34",
-        "summary": "Ensure the StudyTimer component tracks study time separately for each selected subject/chapter, maintaining accurate time accumulation per chapter when timer stops",
+        "id": "REQ-51",
+        "summary": "Create OTP verification screen that appears after Send OTP is clicked, with 6-digit OTP input and Verify & Login button",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/StudyTimer.tsx"
+          "frontend/src/pages/LoginPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/StudyTimer.tsx"
+          "frontend/src/pages/LoginPage.tsx"
         ]
       },
       {
-        "id": "REQ-35",
-        "summary": "Add a motivational quote display component to the dashboard that shows a different inspirational quote each day, placed prominently near the top of the dashboard page",
+        "id": "REQ-52",
+        "summary": "Create signup form UI for new users that collects Full Name and Class/Course after OTP verification",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/MotivationalQuote.tsx",
-          "frontend/src/pages/DashboardPage.tsx"
+          "frontend/src/pages/LoginPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/MotivationalQuote.tsx",
-          "frontend/src/pages/DashboardPage.tsx"
+          "frontend/src/pages/LoginPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-53",
+        "summary": "Redesign LoginPage UI with light theme (white + blue color combination), app logo at top, title \"Welcome to Tracky\", and subtitle \"Track your syllabus smartly\"",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/LoginPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/LoginPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-54",
+        "summary": "Update Layout component logout functionality to work with new OTP authentication system and clear authentication session",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Layout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Layout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-55",
+        "summary": "Remove or deprecate useInternetIdentity hook and replace with OTP authentication hook throughout the application",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useOTPAuth.tsx",
+          "frontend/src/main.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/pages/LoginPage.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useOTPAuth.tsx",
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/pages/LoginPage.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-56",
+        "summary": "Update useActor hook to initialize backend actor with OTP authentication token instead of Internet Identity delegation",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/hooks/useActor.ts"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-57",
+        "summary": "Remove ProfileSetupPage component as user profile setup is now handled during signup flow",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/pages/ProfileSetupPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/pages/ProfileSetupPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-58",
+        "summary": "Update App.tsx route protection logic to check OTP authentication status and redirect unauthenticated users to LoginPage",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/pages/LoginPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/pages/LoginPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/ChapterList.tsx",
-    "frontend/src/components/MotivationalQuote.tsx",
+    "frontend/public/assets/generated/tracky-logo.dim_256x256.png",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/StudyGoalCard.tsx",
     "frontend/src/components/StudyTimer.tsx",
-    "frontend/src/pages/DashboardPage.tsx",
-    "frontend/src/pages/SyllabusTrackerPage.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useOTPAuth.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/pages/LoginPage.tsx",
+    "frontend/src/pages/ProfileSetupPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

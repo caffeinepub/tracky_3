@@ -1,9 +1,8 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
-  "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with user authentication. Students can add subjects, and within each subject, add multiple chapters with completion tracking. Progress is calculated per-subject and overall, with automatic report generation.",
+  "projectStateVersion": 15,
+  "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with OTP-based mobile authentication. Students can add subjects, and within each subject, add multiple chapters with completion tracking. Progress is calculated per-subject and overall, with automatic report generation.",
   "architectural_notes": [
-    "User authentication required with email/password",
     "Database must enforce per-user data isolation",
     "Dashboard aggregates data from syllabus and study tracking",
     "Chapters must persist permanently and never auto-delete",
@@ -12,10 +11,12 @@
     "Completed chapters remain visible but visually separated (e.g., faded or in a separate section)",
     "Progress calculation: per-subject and overall completion percentages",
     "Progress Report: aggregates subject and chapter statistics with visual bars",
-    "Study timer supports pause/resume in addition to start/stop functionality"
+    "Study timer supports pause/resume in addition to start/stop functionality",
+    "OTP-based authentication replaces email/password: mobile number is primary identifier"
   ],
   "known_issues": [],
   "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Tracky app logo illustration with modern student-friendly design incorporating book and checkmark elements in blue color scheme (tracky-logo.dim_256x256.png)",
   "existing_features": [
     {
       "id": "feature-implement-user-sign-up-functionality-with-email-and-password-authentication",
@@ -216,15 +217,137 @@
         "REQ-35"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-create-a-stopwatch-style-timer-component-on-the-dashboard-page-that-displays-running-time-in-real-time-with-hours-minutes-seconds-format-e-g-00-25-30",
+      "title": "Create a stopwatch-style timer component on the dashboard page that displays running time in real-time with hours:minutes:seconds format (e.g., 00:25:30)",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-start-button-to-the-dashboard-stopwatch-that-begins-counting-elapsed-time-from-zero",
+      "title": "Add Start button to the dashboard stopwatch that begins counting elapsed time from zero",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-pause-button-to-the-dashboard-stopwatch-that-appears-when-timer-is-running-and-pauses-the-elapsed-time-without-resetting",
+      "title": "Add Pause button to the dashboard stopwatch that appears when timer is running and pauses the elapsed time without resetting",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-resume-button-to-the-dashboard-stopwatch-that-appears-when-timer-is-paused-and-continues-counting-from-the-paused-time",
+      "title": "Add Resume button to the dashboard stopwatch that appears when timer is paused and continues counting from the paused time",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-stop-button-to-the-dashboard-stopwatch-that-resets-the-timer-to-00-00-00-and-returns-to-idle-state",
+      "title": "Add Stop button to the dashboard stopwatch that resets the timer to 00:00:00 and returns to idle state",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-modify-the-profilesetuppage-component-to-set-a-browser-flag-localstorage-or-sessionstorage-after-the-user-successfully-completes-their-first-profile-setup-indicating-that-initial-authentication-is-complete",
+      "title": "Modify the ProfileSetupPage component to set a browser flag (localStorage or sessionStorage) after the user successfully completes their first profile setup, indicating that initial authentication is complete",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-loginpage-component-to-skip-rendering-the-login-ui-and-immediately-redirect-to-dashboard-if-the-authentication-flag-is-set-and-internet-identity-session-is-active",
+      "title": "Update the LoginPage component to skip rendering the login UI and immediately redirect to dashboard if the authentication flag is set and Internet Identity session is active",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-logout-functionality-in-layout-tsx-clears-the-authentication-flag-from-browser-storage-so-that-users-who-manually-log-out-will-see-the-login-page-again-on-their-next-visit",
+      "title": "Ensure the logout functionality in Layout.tsx clears the authentication flag from browser storage, so that users who manually log out will see the login page again on their next visit",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-frontend-internet-identity-login-with-mobile-number-otp-login-ui-on-loginpage",
+      "title": "Replace frontend Internet Identity login with mobile number OTP login UI on LoginPage",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-otp-verification-screen-that-appears-after-send-otp-is-clicked-with-6-digit-otp-input-and-verify-login-button",
+      "title": "Create OTP verification screen that appears after Send OTP is clicked, with 6-digit OTP input and Verify & Login button",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-signup-form-ui-for-new-users-that-collects-full-name-and-class-course-after-otp-verification",
+      "title": "Create signup form UI for new users that collects Full Name and Class/Course after OTP verification",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-loginpage-ui-with-light-theme-white-blue-color-combination-app-logo-at-top-title-welcome-to-tracky-and-subtitle-track-your-syllabus-smartly",
+      "title": "Redesign LoginPage UI with light theme (white + blue color combination), app logo at top, title \"Welcome to Tracky\", and subtitle \"Track your syllabus smartly\"",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-layout-component-logout-functionality-to-work-with-new-otp-authentication-system-and-clear-authentication-session",
+      "title": "Update Layout component logout functionality to work with new OTP authentication system and clear authentication session",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-or-deprecate-useinternetidentity-hook-and-replace-with-otp-authentication-hook-throughout-the-application",
+      "title": "Remove or deprecate useInternetIdentity hook and replace with OTP authentication hook throughout the application",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-profilesetuppage-component-as-user-profile-setup-is-now-handled-during-signup-flow",
+      "title": "Remove ProfileSetupPage component as user profile setup is now handled during signup flow",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-app-tsx-route-protection-logic-to-check-otp-authentication-status-and-redirect-unauthenticated-users-to-loginpage",
+      "title": "Update App.tsx route protection logic to check OTP authentication status and redirect unauthenticated users to LoginPage",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "User authentication with email/password sign up and login",
-      "reqIds": [],
-      "status": "pending"
-    },
     {
       "id": "AR-2",
       "summary": "Separate private data storage per user",
@@ -420,6 +543,100 @@
       "summary": "Display a daily motivational quote on the dashboard",
       "reqIds": [
         "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Add stopwatch-style timer display in the dashboard with pause/resume/stop controls",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Replace current authentication with OTP-based mobile number authentication",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Design Login & Signup screen with light theme (white + blue), app logo, mobile number input (10 digits), Send OTP button, and OTP verification (6-digit input)",
+      "reqIds": [
+        "AR-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Show signup form (Full Name, Class/Course) for new mobile numbers during OTP flow",
+      "reqIds": [
+        "AR-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Store user data separately per mobile number with unique account creation",
+      "reqIds": [
+        "AR-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Add loading animation during OTP verification",
+      "reqIds": [
+        "AR-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Remove Internet Identity authentication system and replace with OTP-based mobile number authentication backend logic",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Update backend user profile model to store mobile number (10 digits) as the primary identifier instead of Internet Identity principal",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Implement backend method to send OTP to mobile number (placeholder/mock implementation for OTP delivery)",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Implement backend method to verify OTP and create authenticated session",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "Implement backend method to check if mobile number is registered and handle new user signup flow",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-48",
+      "summary": "Update useActor hook to initialize backend actor with OTP authentication token instead of Internet Identity delegation",
+      "reqIds": [
+        "REQ-56"
       ],
       "status": "pending"
     }

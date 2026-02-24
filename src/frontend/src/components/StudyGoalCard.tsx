@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Target, CheckCircle2 } from 'lucide-react';
-import { useGetDailyGoal, useSetDailyGoal, useGetTotalStudyTime } from '../hooks/useQueries';
+import { useGetDailyStudyGoal, useSetDailyStudyGoal, useGetTotalStudyTime } from '../hooks/useQueries';
 import { formatStudyTime } from '../utils/timeFormatters';
 
 export default function StudyGoalCard() {
-  const { data: dailyGoal } = useGetDailyGoal();
+  const { data: dailyGoal } = useGetDailyStudyGoal();
   const { data: totalStudyTime } = useGetTotalStudyTime();
-  const setDailyGoalMutation = useSetDailyGoal();
+  const setDailyGoalMutation = useSetDailyStudyGoal();
   const [goalInput, setGoalInput] = useState('');
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function StudyGoalCard() {
     <Card className="shadow-soft">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Target className="w-5 h-5 text-sage" />
+          <Target className="w-5 h-5 text-blue-600" />
           Daily Study Goal
         </CardTitle>
       </CardHeader>
@@ -78,7 +78,7 @@ export default function StudyGoalCard() {
             </div>
             <Progress value={progressPercentage} className="h-2" />
             {goalReached && (
-              <div className="flex items-center gap-2 text-sage font-medium text-sm">
+              <div className="flex items-center gap-2 text-blue-600 font-medium text-sm">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Daily goal reached! 🎉</span>
               </div>

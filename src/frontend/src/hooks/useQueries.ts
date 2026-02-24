@@ -2,6 +2,58 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import type { UserProfile, ChapterStatus, Subject, Chapter } from '../backend';
 
+// OTP Authentication Queries
+export function useRequestOtp() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (mobileNumber: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.requestOtp(mobileNumber);
+    },
+  });
+}
+
+export function useVerifyOtp() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async ({ mobileNumber, otp }: { mobileNumber: string; otp: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      const otpNumber = BigInt(otp);
+      return actor.verifyOtp(mobileNumber, otpNumber);
+    },
+  });
+}
+
+export function useIsRegistered() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (mobileNumber: string) => {
+      if (!actor) throw new Error('Actor not available');
+      const mobileNumberBigInt = BigInt(mobileNumber);
+      return actor.isRegistered(mobileNumberBigInt);
+    },
+  });
+}
+
+export function useCreateProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (mobileNumber: string) => {
+      if (!actor) throw new Error('Actor not available');
+      const mobileNumberBigInt = BigInt(mobileNumber);
+      return actor.createProfile(mobileNumberBigInt);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
+  });
+}
+
 // User Profile Queries
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
@@ -135,17 +187,14 @@ export function useUpdateChapterStatus() {
       return actor.updateChapterStatus(chapterName, newStatus);
     },
     onMutate: async ({ chapterName, newStatus, subjectId }) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['chapters', 'bySubject', subjectId.toString()] });
 
-      // Snapshot previous value
       const previousChapters = queryClient.getQueryData<Chapter[]>([
         'chapters',
         'bySubject',
         subjectId.toString(),
       ]);
 
-      // Optimistically update
       if (previousChapters) {
         queryClient.setQueryData<Chapter[]>(
           ['chapters', 'bySubject', subjectId.toString()],
@@ -156,7 +205,6 @@ export function useUpdateChapterStatus() {
       return { previousChapters, subjectId };
     },
     onError: (err, variables, context) => {
-      // Rollback on error
       if (context?.previousChapters) {
         queryClient.setQueryData(
           ['chapters', 'bySubject', context.subjectId.toString()],
@@ -173,28 +221,36 @@ export function useUpdateChapterStatus() {
   });
 }
 
-export function useAddStudyTime() {
+export function useAddStudyTimeToChapter() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ chapterName, minutes }: { chapterName: string; minutes: number }) => {
+    mutationFn: async ({
+      chapterName,
+      minutes,
+      subjectId,
+    }: {
+      chapterName: string;
+      minutes: number;
+      subjectId: bigint;
+    }) => {
       if (!actor) throw new Error('Actor not available');
       return actor.addStudyTimeToChapter(chapterName, BigInt(minutes));
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['chapters', 'bySubject', variables.subjectId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['totalStudyTime'] });
-      queryClient.invalidateQueries({ queryKey: ['chapters'] });
     },
   });
 }
 
 // Study Goal Queries
-export function useGetDailyGoal() {
+export function useGetDailyStudyGoal() {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<bigint>({
-    queryKey: ['dailyGoal'],
+    queryKey: ['dailyStudyGoal'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
       return actor.getDailyStudyGoal();
@@ -204,7 +260,7 @@ export function useGetDailyGoal() {
   });
 }
 
-export function useSetDailyGoal() {
+export function useSetDailyStudyGoal() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
@@ -214,7 +270,7 @@ export function useSetDailyGoal() {
       return actor.setDailyStudyGoal(BigInt(minutes));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyGoal'] });
+      queryClient.invalidateQueries({ queryKey: ['dailyStudyGoal'] });
     },
   });
 }

@@ -1,11 +1,21 @@
 # Specification
 
 ## Summary
-**Goal:** Add pause/resume functionality to the study timer and display daily motivational quotes on the dashboard.
+**Goal:** Replace Internet Identity authentication with OTP-based mobile number authentication and redesign the login/signup UI with a student-friendly light theme.
 
 **Planned changes:**
-- Add Pause and Resume buttons to the StudyTimer component that preserve elapsed time across pause/resume cycles
-- Ensure study time is tracked separately for each selected subject/chapter
-- Add a motivational quote display component to the dashboard that shows a different inspirational quote each day
+- Remove Internet Identity authentication system completely
+- Implement OTP-based mobile authentication backend (generate, store, verify OTPs)
+- Update user profile model to use mobile number (10 digits) as primary identifier instead of Internet Identity principal
+- Store Full Name and Class/Course fields in user profile
+- Create new frontend login flow with mobile number input and "Send OTP" button
+- Create OTP verification screen with 6-digit OTP input and "Verify & Login" button
+- Create signup form for new users to enter Full Name and Class/Course after OTP verification
+- Redesign LoginPage with light theme (white + blue), app logo, "Welcome to Tracky" title, and "Track your syllabus smartly" subtitle
+- Replace useInternetIdentity hook with new OTP authentication hook throughout the application
+- Update useActor hook to use OTP authentication tokens instead of Internet Identity delegation
+- Remove ProfileSetupPage component (profile setup now integrated into signup flow)
+- Update logout functionality to clear OTP authentication session
+- Update route protection to check OTP authentication status
 
-**User-visible outcome:** Users can pause and resume their study timer without losing progress, track time accurately per chapter, and see a daily motivational quote on their dashboard to inspire their study sessions.
+**User-visible outcome:** Users can log in and sign up using their mobile number with OTP verification in a redesigned, student-friendly interface with light blue and white colors.

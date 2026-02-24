@@ -13,7 +13,8 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const UserProfile = IDL.Record({ 'email' : IDL.Text });
+export const MobileNumber = IDL.Nat;
+export const UserProfile = IDL.Record({ 'mobileNumber' : MobileNumber });
 export const ChapterStatus = IDL.Variant({
   'pending' : IDL.Null,
   'completed' : IDL.Null,
@@ -30,13 +31,16 @@ export const Subject = IDL.Record({
   'name' : IDL.Text,
   'createdAt' : Time,
 });
+export const OTP = IDL.Nat;
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'addChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
   'addStudyTimeToChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createProfile' : IDL.Func([MobileNumber], [], []),
   'createSubject' : IDL.Func([IDL.Text], [IDL.Nat], []),
+  'getAverageStudyTimePerDay' : IDL.Func([], [IDL.Nat], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getChapterStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
@@ -52,9 +56,13 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isRegistered' : IDL.Func([MobileNumber], [IDL.Bool], []),
+  'recordStudySession' : IDL.Func([IDL.Nat], [], []),
+  'requestOtp' : IDL.Func([IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'setDailyStudyGoal' : IDL.Func([IDL.Nat], [], []),
   'updateChapterStatus' : IDL.Func([IDL.Text, ChapterStatus], [], []),
+  'verifyOtp' : IDL.Func([IDL.Text, OTP], [IDL.Bool], []),
 });
 
 export const idlInitArgs = [];
@@ -65,7 +73,8 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const UserProfile = IDL.Record({ 'email' : IDL.Text });
+  const MobileNumber = IDL.Nat;
+  const UserProfile = IDL.Record({ 'mobileNumber' : MobileNumber });
   const ChapterStatus = IDL.Variant({
     'pending' : IDL.Null,
     'completed' : IDL.Null,
@@ -82,13 +91,16 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
     'createdAt' : Time,
   });
+  const OTP = IDL.Nat;
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'addChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
     'addStudyTimeToChapter' : IDL.Func([IDL.Text, IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createProfile' : IDL.Func([MobileNumber], [], []),
     'createSubject' : IDL.Func([IDL.Text], [IDL.Nat], []),
+    'getAverageStudyTimePerDay' : IDL.Func([], [IDL.Nat], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getChapterStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
@@ -104,9 +116,13 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isRegistered' : IDL.Func([MobileNumber], [IDL.Bool], []),
+    'recordStudySession' : IDL.Func([IDL.Nat], [], []),
+    'requestOtp' : IDL.Func([IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'setDailyStudyGoal' : IDL.Func([IDL.Nat], [], []),
     'updateChapterStatus' : IDL.Func([IDL.Text, ChapterStatus], [], []),
+    'verifyOtp' : IDL.Func([IDL.Text, OTP], [IDL.Bool], []),
   });
 };
 

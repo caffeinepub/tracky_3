@@ -89,6 +89,13 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface Chapter {
+    status: ChapterStatus;
+    name: string;
+    subjectId: bigint;
+    studyTimeMinutes: bigint;
+}
+export type OTP = bigint;
 export type Time = bigint;
 export interface Subject {
     id: bigint;
@@ -96,14 +103,9 @@ export interface Subject {
     createdAt: Time;
 }
 export interface UserProfile {
-    email: string;
+    mobileNumber: MobileNumber;
 }
-export interface Chapter {
-    status: ChapterStatus;
-    name: string;
-    subjectId: bigint;
-    studyTimeMinutes: bigint;
-}
+export type MobileNumber = bigint;
 export enum ChapterStatus {
     pending = "pending",
     completed = "completed"
@@ -118,7 +120,9 @@ export interface backendInterface {
     addChapter(name: string, subjectId: bigint): Promise<void>;
     addStudyTimeToChapter(chapterName: string, minutes: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createProfile(mobileNumber: MobileNumber): Promise<void>;
     createSubject(name: string): Promise<bigint>;
+    getAverageStudyTimePerDay(): Promise<bigint>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getChapterStats(): Promise<[bigint, bigint, bigint]>;
@@ -130,9 +134,13 @@ export interface backendInterface {
     getTotalStudyTime(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    isRegistered(mobileNumber: MobileNumber): Promise<boolean>;
+    recordStudySession(minutes: bigint): Promise<void>;
+    requestOtp(mobileNumber: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     setDailyStudyGoal(minutes: bigint): Promise<void>;
     updateChapterStatus(chapterName: string, newStatus: ChapterStatus): Promise<void>;
+    verifyOtp(mobileNumberText: string, otp: OTP): Promise<boolean>;
 }
 import type { Chapter as _Chapter, ChapterStatus as _ChapterStatus, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -193,6 +201,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createProfile(arg0: MobileNumber): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createProfile(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createProfile(arg0);
+            return result;
+        }
+    }
     async createSubject(arg0: string): Promise<bigint> {
         if (this.processError) {
             try {
@@ -204,6 +226,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createSubject(arg0);
+            return result;
+        }
+    }
+    async getAverageStudyTimePerDay(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAverageStudyTimePerDay();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAverageStudyTimePerDay();
             return result;
         }
     }
@@ -369,6 +405,48 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async isRegistered(arg0: MobileNumber): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isRegistered(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isRegistered(arg0);
+            return result;
+        }
+    }
+    async recordStudySession(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.recordStudySession(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.recordStudySession(arg0);
+            return result;
+        }
+    }
+    async requestOtp(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.requestOtp(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.requestOtp(arg0);
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -408,6 +486,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n11(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async verifyOtp(arg0: string, arg1: OTP): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.verifyOtp(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.verifyOtp(arg0, arg1);
             return result;
         }
     }
