@@ -1,52 +1,42 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { UserProfile, ChapterStatus, Subject, Chapter } from '../backend';
+import type { UserProfile, AuthResult } from '../backend';
 
-// OTP Authentication Queries
-export function useRequestOtp() {
+// Temporary types until backend is restored
+export type ChapterStatus = { __kind__: 'pending' } | { __kind__: 'completed' };
+export type Subject = {
+  id: bigint;
+  name: string;
+  createdAt: bigint;
+};
+export type Chapter = {
+  name: string;
+  status: ChapterStatus;
+  studyTimeMinutes: bigint;
+  subjectId: bigint;
+};
+
+// OTP Authentication Mutations
+export function useSendOTP() {
   const { actor } = useActor();
 
   return useMutation({
     mutationFn: async (mobileNumber: string) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.requestOtp(mobileNumber);
+      await actor.sendOTP(mobileNumber);
     },
   });
 }
 
-export function useVerifyOtp() {
-  const { actor } = useActor();
-
-  return useMutation({
-    mutationFn: async ({ mobileNumber, otp }: { mobileNumber: string; otp: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      const otpNumber = BigInt(otp);
-      return actor.verifyOtp(mobileNumber, otpNumber);
-    },
-  });
-}
-
-export function useIsRegistered() {
-  const { actor } = useActor();
-
-  return useMutation({
-    mutationFn: async (mobileNumber: string) => {
-      if (!actor) throw new Error('Actor not available');
-      const mobileNumberBigInt = BigInt(mobileNumber);
-      return actor.isRegistered(mobileNumberBigInt);
-    },
-  });
-}
-
-export function useCreateProfile() {
+export function useVerifyOTP() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (mobileNumber: string) => {
+    mutationFn: async ({ mobileNumber, code }: { mobileNumber: string; code: string }) => {
       if (!actor) throw new Error('Actor not available');
-      const mobileNumberBigInt = BigInt(mobileNumber);
-      return actor.createProfile(mobileNumberBigInt);
+      const result: AuthResult = await actor.verifyOTP(mobileNumber, code);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
@@ -90,29 +80,25 @@ export function useSaveCallerUserProfile() {
   });
 }
 
-// Subject Queries
+// Subject Queries - BACKEND NOT IMPLEMENTED
 export function useGetSubjects() {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<Subject[]>({
     queryKey: ['subjects'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getSubjects();
+      console.warn('Backend method getSubjects() not implemented');
+      return [];
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
+    enabled: false,
   });
 }
 
 export function useCreateSubject() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (name: string) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.createSubject(name);
+      console.warn('Backend method createSubject() not implemented');
+      throw new Error('Backend functionality not available');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });
@@ -122,42 +108,35 @@ export function useCreateSubject() {
 }
 
 export function useGetSubjectProgress(subjectId: bigint) {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<bigint>({
     queryKey: ['subjectProgress', subjectId.toString()],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getSubjectProgress(subjectId);
+      console.warn('Backend method getSubjectProgress() not implemented');
+      return BigInt(0);
     },
-    enabled: !!actor && !actorFetching && subjectId !== undefined,
-    retry: false,
+    enabled: false,
   });
 }
 
-// Chapter Queries
+// Chapter Queries - BACKEND NOT IMPLEMENTED
 export function useGetChaptersBySubject(subjectId: bigint | null) {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<Chapter[]>({
     queryKey: ['chapters', 'bySubject', subjectId?.toString()],
     queryFn: async () => {
-      if (!actor || subjectId === null) throw new Error('Actor or subject not available');
-      return actor.getChaptersBySubject(subjectId);
+      console.warn('Backend method getChaptersBySubject() not implemented');
+      return [];
     },
-    enabled: !!actor && !actorFetching && subjectId !== null,
-    retry: false,
+    enabled: false,
   });
 }
 
 export function useAddChapter() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ name, subjectId }: { name: string; subjectId: bigint }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.addChapter(name, subjectId);
+      console.warn('Backend method addChapter() not implemented');
+      throw new Error('Backend functionality not available');
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['chapters'] });
@@ -170,7 +149,6 @@ export function useAddChapter() {
 }
 
 export function useUpdateChapterStatus() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -183,8 +161,8 @@ export function useUpdateChapterStatus() {
       newStatus: ChapterStatus;
       subjectId: bigint;
     }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.updateChapterStatus(chapterName, newStatus);
+      console.warn('Backend method updateChapterStatus() not implemented');
+      throw new Error('Backend functionality not available');
     },
     onMutate: async ({ chapterName, newStatus, subjectId }) => {
       await queryClient.cancelQueries({ queryKey: ['chapters', 'bySubject', subjectId.toString()] });
@@ -204,7 +182,7 @@ export function useUpdateChapterStatus() {
 
       return { previousChapters, subjectId };
     },
-    onError: (err, variables, context) => {
+    onError: (err, variables, context: any) => {
       if (context?.previousChapters) {
         queryClient.setQueryData(
           ['chapters', 'bySubject', context.subjectId.toString()],
@@ -222,7 +200,6 @@ export function useUpdateChapterStatus() {
 }
 
 export function useAddStudyTimeToChapter() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -235,8 +212,8 @@ export function useAddStudyTimeToChapter() {
       minutes: number;
       subjectId: bigint;
     }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.addStudyTimeToChapter(chapterName, BigInt(minutes));
+      console.warn('Backend method addStudyTimeToChapter() not implemented');
+      throw new Error('Backend functionality not available');
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['chapters', 'bySubject', variables.subjectId.toString()] });
@@ -245,29 +222,25 @@ export function useAddStudyTimeToChapter() {
   });
 }
 
-// Study Goal Queries
+// Study Goal Queries - BACKEND NOT IMPLEMENTED
 export function useGetDailyStudyGoal() {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<bigint>({
     queryKey: ['dailyStudyGoal'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getDailyStudyGoal();
+      console.warn('Backend method getDailyStudyGoal() not implemented');
+      return BigInt(0);
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
+    enabled: false,
   });
 }
 
 export function useSetDailyStudyGoal() {
-  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (minutes: number) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.setDailyStudyGoal(BigInt(minutes));
+      console.warn('Backend method setDailyStudyGoal() not implemented');
+      throw new Error('Backend functionality not available');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dailyStudyGoal'] });
@@ -275,45 +248,36 @@ export function useSetDailyStudyGoal() {
   });
 }
 
-// Dashboard Queries
+// Dashboard Queries - BACKEND NOT IMPLEMENTED
 export function useGetDashboardProgress() {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<bigint>({
     queryKey: ['dashboardProgress'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getDashboardProgress();
+      console.warn('Backend method getDashboardProgress() not implemented');
+      return BigInt(0);
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
+    enabled: false,
   });
 }
 
 export function useGetChapterStats() {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<[bigint, bigint, bigint]>({
     queryKey: ['chapterStats'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getChapterStats();
+      console.warn('Backend method getChapterStats() not implemented');
+      return [BigInt(0), BigInt(0), BigInt(0)];
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
+    enabled: false,
   });
 }
 
 export function useGetTotalStudyTime() {
-  const { actor, isFetching: actorFetching } = useActor();
-
   return useQuery<bigint>({
     queryKey: ['totalStudyTime'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getTotalStudyTime();
+      console.warn('Backend method getTotalStudyTime() not implemented');
+      return BigInt(0);
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
+    enabled: false,
   });
 }

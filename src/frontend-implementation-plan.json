@@ -1,195 +1,64 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace Internet Identity with OTP-based mobile authentication and redesign login/signup UI",
+  "title": "Improve LoginPage styling and implement OTP backend functionality",
   "requirements": [
     {
-      "id": "REQ-50",
-      "summary": "Replace frontend Internet Identity login with mobile number OTP login UI on LoginPage",
+      "id": "REQ-59",
+      "summary": "Refine LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining white + blue color scheme",
       "acceptanceCriteria": [
-        "LoginPage displays mobile number input field (numeric only, max 10 digits)",
-        "LoginPage includes \"Send OTP\" button",
-        "Mobile number input validates 10-digit format before enabling Send OTP button",
-        "Clicking Send OTP calls backend to generate and send OTP",
-        "Loading state is shown while OTP is being sent"
+        "LoginPage maintains white + blue color scheme",
+        "Form elements have consistent spacing and alignment",
+        "Buttons use consistent styling with hover states",
+        "Layout is responsive and works on mobile devices",
+        "Typography hierarchy is clear and readable"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/LoginPage.tsx",
           "operation": "modify",
-          "description": "Replace Internet Identity login UI with mobile number input form. Add numeric-only mobile number input field (max 10 digits) with validation. Add \"Send OTP\" button that calls backend requestOtp method. Display loading state during OTP request. Transition to OTP verification screen on success."
+          "description": "Refine the LoginPage component styling to improve visual hierarchy, spacing, and button consistency. Update the container structure to use consistent padding (e.g., p-8), improve form field spacing with gap utilities, ensure buttons have consistent sizing and hover states using the existing blue color scheme from Tailwind config, add responsive breakpoints for mobile layout, and improve typography hierarchy with appropriate text sizing and weight. Keep the existing three-step flow (mobile entry, OTP verification, signup) intact."
         }
       ]
     },
     {
-      "id": "REQ-51",
-      "summary": "Create OTP verification screen that appears after Send OTP is clicked, with 6-digit OTP input and Verify & Login button",
+      "id": "REQ-62",
+      "summary": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods",
       "acceptanceCriteria": [
-        "After Send OTP succeeds, LoginPage transitions to OTP verification screen",
-        "Screen displays 6-digit OTP input field (numeric only)",
-        "Screen includes \"Verify & Login\" button",
-        "Clicking Verify & Login calls backend to verify OTP",
-        "Loading animation is shown during verification",
-        "On successful verification, user is redirected to Dashboard or Signup flow"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/LoginPage.tsx",
-          "operation": "modify",
-          "description": "Add OTP verification screen state within LoginPage. Display 6-digit numeric OTP input field. Add \"Verify & Login\" button that calls backend verifyOtp method. Show loading state during verification. On success, check if user is registered using backend isRegistered method. If registered, authenticate and redirect to Dashboard. If not registered, show signup form."
-        }
-      ]
-    },
-    {
-      "id": "REQ-52",
-      "summary": "Create signup form UI for new users that collects Full Name and Class/Course after OTP verification",
-      "acceptanceCriteria": [
-        "If backend indicates mobile number is not registered after OTP verification, show signup form",
-        "Form includes Full Name input field (text)",
-        "Form includes Class/Course input field (text)",
-        "Form includes \"Create Account\" button",
-        "Clicking Create Account submits data to backend and creates user profile",
-        "After account creation, user is redirected to Dashboard"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/LoginPage.tsx",
-          "operation": "modify",
-          "description": "Add signup form state within LoginPage for new users. Display Full Name and Class/Course text input fields. Add \"Create Account\" button that calls backend createProfile method with mobile number. Show loading state during account creation. On success, authenticate user and redirect to Dashboard."
-        }
-      ]
-    },
-    {
-      "id": "REQ-53",
-      "summary": "Redesign LoginPage UI with light theme (white + blue color combination), app logo at top, title \"Welcome to Tracky\", and subtitle \"Track your syllabus smartly\"",
-      "acceptanceCriteria": [
-        "LoginPage uses white background with blue accent colors",
-        "App logo is displayed at the top center of the page",
-        "Title \"Welcome to Tracky\" is prominently displayed below logo",
-        "Subtitle \"Track your syllabus smartly\" is shown below title",
-        "Overall design is clean, minimal, and student-friendly",
-        "UI is fully mobile responsive"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/LoginPage.tsx",
-          "operation": "modify",
-          "description": "Apply light theme with white background and blue accents (using existing Tailwind blue or sage colors). Display the generated Tracky logo (frontend/public/assets/generated/tracky-logo.dim_256x256.png) at the top center. Add title \"Welcome to Tracky\" and subtitle \"Track your syllabus smartly\" below the logo. Ensure mobile-responsive layout with clean, minimal design. Remove Internet Identity button and related UI elements."
-        }
-      ]
-    },
-    {
-      "id": "REQ-54",
-      "summary": "Update Layout component logout functionality to work with new OTP authentication system and clear authentication session",
-      "acceptanceCriteria": [
-        "Logout button in Layout component clears OTP authentication session",
-        "Logout clears any authentication tokens or session data stored in browser",
-        "After logout, user is redirected to LoginPage",
-        "Logged out users cannot access protected routes without re-authenticating"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Replace Internet Identity logout logic with OTP authentication logout. Call the new useOTPAuth hook's clear/logout method. Clear React Query cache and any localStorage/sessionStorage authentication tokens. Redirect to LoginPage after logout."
-        }
-      ]
-    },
-    {
-      "id": "REQ-55",
-      "summary": "Remove or deprecate useInternetIdentity hook and replace with OTP authentication hook throughout the application",
-      "acceptanceCriteria": [
-        "Create new authentication hook for OTP-based auth (e.g., useOTPAuth)",
-        "Replace all useInternetIdentity imports and usage with new OTP auth hook",
-        "Authentication state (logged in/out) is managed via new hook",
-        "Protected routes check OTP authentication status instead of Internet Identity"
+        "useOTPAuth calls backend sendOTP method when sending OTP",
+        "useOTPAuth calls backend verifyOTP method during verification",
+        "Authentication state is updated based on backend verification response",
+        "Error handling for failed OTP operations is implemented",
+        "User session is established after successful OTP verification"
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useOTPAuth.tsx",
-          "operation": "create",
-          "description": "Create new OTP authentication hook and context provider. Manage authentication state (mobile number, authentication token/session). Provide login method that stores authentication state after successful OTP verification. Provide clear/logout method that clears authentication state. Store authentication token in localStorage or sessionStorage for persistence. Export useOTPAuth hook and OTPAuthProvider component."
+          "operation": "modify",
+          "description": "Replace the mock localStorage OTP logic with actual backend integration. Import useActor hook to access the backend actor. Update sendOTP function to call actor.sendOTP(mobileNumber) instead of generating and storing OTP locally. Update verifyOTP function to call actor.verifyOTP(mobileNumber, code) and handle the AuthResult response. Set authentication state based on the backend verification result (authenticated flag and userId). Add proper error handling for failed backend calls and return error messages to the UI. Remove the mock OTP generation and localStorage storage logic since the backend now handles OTP management."
         },
         {
-          "path": "frontend/src/main.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Replace InternetIdentityProvider with OTPAuthProvider. Wrap the App component with OTPAuthProvider to provide authentication context to all components."
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Replace useInternetIdentity import with useOTPAuth. Update authentication state checks to use OTP auth context instead of Internet Identity."
-        },
+          "description": "Add useMutation hooks for sendOTP and verifyOTP operations. Create useSendOTP mutation that calls actor.sendOTP(mobileNumber) and handles loading/error states. Create useVerifyOTP mutation that calls actor.verifyOTP(mobileNumber, code), returns the AuthResult, and invalidates relevant query cache on success. These mutations will be consumed by the useOTPAuth hook and LoginPage component to provide loading states and error handling."
+        }
+      ]
+    },
+    {
+      "id": "REQ-63",
+      "summary": "Update LoginPage to display loading states during OTP operations and show feedback messages",
+      "acceptanceCriteria": [
+        "Send OTP button shows loading state while request is processing",
+        "Verify button shows loading state during OTP verification",
+        "Form inputs are disabled during active requests",
+        "Error messages are displayed for failed operations",
+        "Success feedback is shown before navigation to dashboard"
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/pages/LoginPage.tsx",
           "operation": "modify",
-          "description": "Replace useInternetIdentity with useOTPAuth. Use OTP auth context to check authentication status and redirect authenticated users."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Replace useInternetIdentity import with useOTPAuth in ProtectedRoute wrapper. Update authentication checks to use OTP auth context."
-        }
-      ]
-    },
-    {
-      "id": "REQ-56",
-      "summary": "Update useActor hook to initialize backend actor with OTP authentication token instead of Internet Identity delegation",
-      "acceptanceCriteria": [
-        "useActor hook retrieves authentication token from OTP auth context",
-        "Backend actor is initialized with OTP authentication token",
-        "Actor requests include authentication credentials for access control",
-        "Hook invalidates queries when authentication state changes"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useActor.ts",
-          "operation": "modify",
-          "description": "Replace Internet Identity delegation logic with OTP authentication token retrieval from useOTPAuth context. Initialize backend actor with OTP authentication credentials. Pass authentication token to actor initialization. Update dependency array to invalidate queries when OTP authentication state changes. Remove Internet Identity-specific initialization logic."
-        }
-      ]
-    },
-    {
-      "id": "REQ-57",
-      "summary": "Remove ProfileSetupPage component as user profile setup is now handled during signup flow",
-      "acceptanceCriteria": [
-        "ProfileSetupPage route is removed from App.tsx",
-        "Profile setup logic (Full Name, Class/Course) is integrated into signup flow on LoginPage",
-        "Navigation no longer redirects to separate profile setup page",
-        "Users complete profile during initial signup immediately after OTP verification"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Remove ProfileSetupPage route definition and import. Remove profile completion checks from ProtectedRoute wrapper since profile setup now happens during signup on LoginPage. Simplify route protection logic to only check OTP authentication status."
-        },
-        {
-          "path": "frontend/src/pages/ProfileSetupPage.tsx",
-          "operation": "delete",
-          "description": "Delete ProfileSetupPage component file as profile setup is now integrated into the LoginPage signup flow."
-        }
-      ]
-    },
-    {
-      "id": "REQ-58",
-      "summary": "Update App.tsx route protection logic to check OTP authentication status and redirect unauthenticated users to LoginPage",
-      "acceptanceCriteria": [
-        "Protected routes check if user is authenticated via OTP system",
-        "Unauthenticated users are redirected to LoginPage",
-        "Authenticated users can access Dashboard, Subjects, and Syllabus Tracker pages",
-        "After successful login or signup, user is automatically redirected to Dashboard"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Update ProtectedRoute component to use useOTPAuth hook instead of useInternetIdentity. Check OTP authentication status and redirect unauthenticated users to LoginPage. Remove profile completion redirect logic. Ensure all protected routes (Dashboard, Subjects, Syllabus Tracker) are wrapped with updated ProtectedRoute component."
-        },
-        {
-          "path": "frontend/src/pages/LoginPage.tsx",
-          "operation": "modify",
-          "description": "Add navigation logic to redirect to Dashboard after successful login or signup. Use React Router navigate to redirect authenticated users who manually visit LoginPage."
+          "description": "Update LoginPage to consume the sendOTP and verifyOTP mutations from useQueries. Add loading state handling by checking mutation.isPending for both send and verify operations. Update the Send OTP button to show loading text and disable when isPending is true. Update the Verify button to show loading text and disable during verification. Disable mobile number input during OTP send operation and OTP code input during verification. Display error messages from mutation.error when operations fail. Show a success message briefly after successful OTP verification before the user is redirected to dashboard (the redirect logic is handled by App.tsx protected routes). Ensure form submission handlers call the mutation functions instead of the old hook methods."
         }
       ]
     }

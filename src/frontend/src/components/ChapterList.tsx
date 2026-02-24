@@ -1,7 +1,6 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Check, Clock } from 'lucide-react';
-import { useUpdateChapterStatus } from '../hooks/useQueries';
-import { Chapter, ChapterStatus } from '../backend';
+import { useUpdateChapterStatus, Chapter, ChapterStatus } from '../hooks/useQueries';
 import { formatStudyTime } from '../utils/timeFormatters';
 
 interface ChapterListProps {
@@ -15,7 +14,9 @@ export default function ChapterList({ chapters, subjectId, onChapterSelect, sele
   const updateStatusMutation = useUpdateChapterStatus();
 
   const handleStatusChange = async (chapterName: string, currentStatus: ChapterStatus) => {
-    const newStatus = currentStatus === ChapterStatus.completed ? ChapterStatus.pending : ChapterStatus.completed;
+    const newStatus: ChapterStatus = currentStatus.__kind__ === 'completed' 
+      ? { __kind__: 'pending' } 
+      : { __kind__: 'completed' };
     try {
       await updateStatusMutation.mutateAsync({
         chapterName,
@@ -27,8 +28,8 @@ export default function ChapterList({ chapters, subjectId, onChapterSelect, sele
     }
   };
 
-  const incompleteChapters = chapters.filter((ch) => ch.status === ChapterStatus.pending);
-  const completedChapters = chapters.filter((ch) => ch.status === ChapterStatus.completed);
+  const incompleteChapters = chapters.filter((ch) => ch.status.__kind__ === 'pending');
+  const completedChapters = chapters.filter((ch) => ch.status.__kind__ === 'completed');
 
   if (chapters.length === 0) {
     return (
@@ -39,7 +40,7 @@ export default function ChapterList({ chapters, subjectId, onChapterSelect, sele
   }
 
   const renderChapter = (chapter: Chapter) => {
-    const isCompleted = chapter.status === ChapterStatus.completed;
+    const isCompleted = chapter.status.__kind__ === 'completed';
     const isSelected = selectedChapter === chapter.name;
     const studyTime = Number(chapter.studyTimeMinutes);
 

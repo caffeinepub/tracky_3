@@ -2,8 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-frontend-internet-identity-login-with-mobile-number-otp-login-ui-on-loginpage",
-      "featureTitle": "Replace frontend Internet Identity login with mobile number OTP login UI on LoginPage",
+      "featureId": "feature-refine-the-loginpage-ui-styling-to-improve-visual-hierarchy-spacing-and-responsiveness-while-maintaining-the-existing-light-theme-white-blue-color-scheme-ensuring-consistent-padding-button-styling-and-mobile-friendly-layout",
+      "featureTitle": "Refine the LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining the existing light theme (white + blue color scheme), ensuring consistent padding, button styling, and mobile-friendly layout",
       "files": [
         "frontend/src/pages/LoginPage.tsx"
       ],
@@ -16,13 +16,32 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-50"
+        "REQ-59"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-otp-verification-screen-that-appears-after-send-otp-is-clicked-with-6-digit-otp-input-and-verify-login-button",
-      "featureTitle": "Create OTP verification screen that appears after Send OTP is clicked, with 6-digit OTP input and Verify & Login button",
+      "featureId": "feature-update-useotpauth-hook-to-integrate-with-backend-sendotp-and-verifyotp-methods-replacing-mock-localstorage-logic-with-actual-backend-api-calls-for-otp-generation-and-verification",
+      "featureTitle": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods, replacing mock localStorage logic with actual backend API calls for OTP generation and verification",
+      "files": [
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-62"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-loginpage-component-to-display-loading-states-during-otp-send-and-verification-operations-showing-appropriate-feedback-messages-and-disabling-form-inputs-while-backend-requests-are-in-progress",
+      "featureTitle": "Update LoginPage component to display loading states during OTP send and verification operations, showing appropriate feedback messages and disabling form inputs while backend requests are in progress",
       "files": [
         "frontend/src/pages/LoginPage.tsx"
       ],
@@ -35,126 +54,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-51"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-signup-form-ui-for-new-users-that-collects-full-name-and-class-course-after-otp-verification",
-      "featureTitle": "Create signup form UI for new users that collects Full Name and Class/Course after OTP verification",
-      "files": [
-        "frontend/src/pages/LoginPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-52"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-redesign-loginpage-ui-with-light-theme-white-blue-color-combination-app-logo-at-top-title-welcome-to-tracky-and-subtitle-track-your-syllabus-smartly",
-      "featureTitle": "Redesign LoginPage UI with light theme (white + blue color combination), app logo at top, title \"Welcome to Tracky\", and subtitle \"Track your syllabus smartly\"",
-      "files": [
-        "frontend/src/pages/LoginPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-53"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-layout-component-logout-functionality-to-work-with-new-otp-authentication-system-and-clear-authentication-session",
-      "featureTitle": "Update Layout component logout functionality to work with new OTP authentication system and clear authentication session",
-      "files": [
-        "frontend/src/components/Layout.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-54"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-remove-or-deprecate-useinternetidentity-hook-and-replace-with-otp-authentication-hook-throughout-the-application",
-      "featureTitle": "Remove or deprecate useInternetIdentity hook and replace with OTP authentication hook throughout the application",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/hooks/useOTPAuth.tsx",
-        "frontend/src/pages/LoginPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-55"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-remove-profilesetuppage-component-as-user-profile-setup-is-now-handled-during-signup-flow",
-      "featureTitle": "Remove ProfileSetupPage component as user profile setup is now handled during signup flow",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/ProfileSetupPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-57"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-app-tsx-route-protection-logic-to-check-otp-authentication-status-and-redirect-unauthenticated-users-to-loginpage",
-      "featureTitle": "Update App.tsx route protection logic to check OTP authentication status and redirect unauthenticated users to LoginPage",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/LoginPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-58"
+        "REQ-63"
       ],
       "confidence": "high"
     }

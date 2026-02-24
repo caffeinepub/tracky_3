@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
+  "projectStateVersion": 17,
   "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with OTP-based mobile authentication. Students can add subjects, and within each subject, add multiple chapters with completion tracking. Progress is calculated per-subject and overall, with automatic report generation.",
   "architectural_notes": [
     "Database must enforce per-user data isolation",
@@ -16,7 +16,6 @@
   ],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Tracky app logo illustration with modern student-friendly design incorporating book and checkmark elements in blue color scheme (tracky-logo.dim_256x256.png)",
   "existing_features": [
     {
       "id": "feature-implement-user-sign-up-functionality-with-email-and-password-authentication",
@@ -345,6 +344,30 @@
         "REQ-58"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-refine-the-loginpage-ui-styling-to-improve-visual-hierarchy-spacing-and-responsiveness-while-maintaining-the-existing-light-theme-white-blue-color-scheme-ensuring-consistent-padding-button-styling-and-mobile-friendly-layout",
+      "title": "Refine the LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining the existing light theme (white + blue color scheme), ensuring consistent padding, button styling, and mobile-friendly layout",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-useotpauth-hook-to-integrate-with-backend-sendotp-and-verifyotp-methods-replacing-mock-localstorage-logic-with-actual-backend-api-calls-for-otp-generation-and-verification",
+      "title": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods, replacing mock localStorage logic with actual backend API calls for OTP generation and verification",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-loginpage-component-to-display-loading-states-during-otp-send-and-verification-operations-showing-appropriate-feedback-messages-and-disabling-form-inputs-while-backend-requests-are-in-progress",
+      "title": "Update LoginPage component to display loading states during OTP send and verification operations, showing appropriate feedback messages and disabling form inputs while backend requests are in progress",
+      "reqIds": [
+        "REQ-63"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -637,6 +660,31 @@
       "summary": "Update useActor hook to initialize backend actor with OTP authentication token instead of Internet Identity delegation",
       "reqIds": [
         "REQ-56"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-49",
+      "summary": "Improve LoginPage styling and implement OTP backend functionality",
+      "reqIds": [
+        "AR-32",
+        "AR-33"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-51",
+      "summary": "Implement backend method sendOTP that accepts a mobile number (Text, 10 digits) and generates a 6-digit OTP code, storing it temporarily with the mobile number and an expiration timestamp (5 minutes validity)",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-52",
+      "summary": "Implement backend method verifyOTP that accepts mobile number and OTP code, validates the OTP against stored data, checks expiration, and returns authentication status with user ID if verification succeeds",
+      "reqIds": [
+        "REQ-61"
       ],
       "status": "pending"
     }

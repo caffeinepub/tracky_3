@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { FolderOpen } from 'lucide-react';
-import { useGetSubjectProgress } from '../hooks/useQueries';
-import type { Subject } from '../backend';
+import { useGetSubjectProgress, Subject } from '../hooks/useQueries';
 
 interface SubjectCardProps {
   subject: Subject;

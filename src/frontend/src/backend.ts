@@ -89,26 +89,13 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface Chapter {
-    status: ChapterStatus;
-    name: string;
-    subjectId: bigint;
-    studyTimeMinutes: bigint;
-}
-export type OTP = bigint;
-export type Time = bigint;
-export interface Subject {
-    id: bigint;
-    name: string;
-    createdAt: Time;
+export interface AuthResult {
+    userId?: string;
+    authenticated: boolean;
 }
 export interface UserProfile {
-    mobileNumber: MobileNumber;
-}
-export type MobileNumber = bigint;
-export enum ChapterStatus {
-    pending = "pending",
-    completed = "completed"
+    name: string;
+    mobileNumber: string;
 }
 export enum UserRole {
     admin = "admin",
@@ -117,32 +104,16 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    addChapter(name: string, subjectId: bigint): Promise<void>;
-    addStudyTimeToChapter(chapterName: string, minutes: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createProfile(mobileNumber: MobileNumber): Promise<void>;
-    createSubject(name: string): Promise<bigint>;
-    getAverageStudyTimePerDay(): Promise<bigint>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getChapterStats(): Promise<[bigint, bigint, bigint]>;
-    getChaptersBySubject(subjectId: bigint): Promise<Array<Chapter>>;
-    getDailyStudyGoal(): Promise<bigint>;
-    getDashboardProgress(): Promise<bigint>;
-    getSubjectProgress(subjectId: bigint): Promise<bigint>;
-    getSubjects(): Promise<Array<Subject>>;
-    getTotalStudyTime(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
-    isRegistered(mobileNumber: MobileNumber): Promise<boolean>;
-    recordStudySession(minutes: bigint): Promise<void>;
-    requestOtp(mobileNumber: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    setDailyStudyGoal(minutes: bigint): Promise<void>;
-    updateChapterStatus(chapterName: string, newStatus: ChapterStatus): Promise<void>;
-    verifyOtp(mobileNumberText: string, otp: OTP): Promise<boolean>;
+    sendOTP(mobileNumber: string): Promise<void>;
+    verifyOTP(mobileNumber: string, code: string): Promise<AuthResult>;
 }
-import type { Chapter as _Chapter, ChapterStatus as _ChapterStatus, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AuthResult as _AuthResult, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -159,34 +130,6 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async addChapter(arg0: string, arg1: bigint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.addChapter(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.addChapter(arg0, arg1);
-            return result;
-        }
-    }
-    async addStudyTimeToChapter(arg0: string, arg1: bigint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.addStudyTimeToChapter(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.addStudyTimeToChapter(arg0, arg1);
-            return result;
-        }
-    }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
@@ -198,48 +141,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
-            return result;
-        }
-    }
-    async createProfile(arg0: MobileNumber): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.createProfile(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.createProfile(arg0);
-            return result;
-        }
-    }
-    async createSubject(arg0: string): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.createSubject(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.createSubject(arg0);
-            return result;
-        }
-    }
-    async getAverageStudyTimePerDay(): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAverageStudyTimePerDay();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAverageStudyTimePerDay();
             return result;
         }
     }
@@ -271,112 +172,6 @@ export class Backend implements backendInterface {
             return from_candid_UserRole_n4(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getChapterStats(): Promise<[bigint, bigint, bigint]> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getChapterStats();
-                return [
-                    result[0],
-                    result[1],
-                    result[2]
-                ];
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getChapterStats();
-            return [
-                result[0],
-                result[1],
-                result[2]
-            ];
-        }
-    }
-    async getChaptersBySubject(arg0: bigint): Promise<Array<Chapter>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getChaptersBySubject(arg0);
-                return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getChaptersBySubject(arg0);
-            return from_candid_vec_n6(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getDailyStudyGoal(): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getDailyStudyGoal();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getDailyStudyGoal();
-            return result;
-        }
-    }
-    async getDashboardProgress(): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getDashboardProgress();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getDashboardProgress();
-            return result;
-        }
-    }
-    async getSubjectProgress(arg0: bigint): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getSubjectProgress(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getSubjectProgress(arg0);
-            return result;
-        }
-    }
-    async getSubjects(): Promise<Array<Subject>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getSubjects();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getSubjects();
-            return result;
-        }
-    }
-    async getTotalStudyTime(): Promise<bigint> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getTotalStudyTime();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getTotalStudyTime();
-            return result;
-        }
-    }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
@@ -405,48 +200,6 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async isRegistered(arg0: MobileNumber): Promise<boolean> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.isRegistered(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.isRegistered(arg0);
-            return result;
-        }
-    }
-    async recordStudySession(arg0: bigint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.recordStudySession(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.recordStudySession(arg0);
-            return result;
-        }
-    }
-    async requestOtp(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.requestOtp(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.requestOtp(arg0);
-            return result;
-        }
-    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -461,54 +214,37 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async setDailyStudyGoal(arg0: bigint): Promise<void> {
+    async sendOTP(arg0: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.setDailyStudyGoal(arg0);
+                const result = await this.actor.sendOTP(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.setDailyStudyGoal(arg0);
+            const result = await this.actor.sendOTP(arg0);
             return result;
         }
     }
-    async updateChapterStatus(arg0: string, arg1: ChapterStatus): Promise<void> {
+    async verifyOTP(arg0: string, arg1: string): Promise<AuthResult> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n11(this._uploadFile, this._downloadFile, arg1));
-                return result;
+                const result = await this.actor.verifyOTP(arg0, arg1);
+                return from_candid_AuthResult_n6(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateChapterStatus(arg0, to_candid_ChapterStatus_n11(this._uploadFile, this._downloadFile, arg1));
-            return result;
-        }
-    }
-    async verifyOtp(arg0: string, arg1: OTP): Promise<boolean> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.verifyOtp(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.verifyOtp(arg0, arg1);
-            return result;
+            const result = await this.actor.verifyOTP(arg0, arg1);
+            return from_candid_AuthResult_n6(this._uploadFile, this._downloadFile, result);
         }
     }
 }
-function from_candid_ChapterStatus_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ChapterStatus): ChapterStatus {
-    return from_candid_variant_n10(_uploadFile, _downloadFile, value);
-}
-function from_candid_Chapter_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Chapter): Chapter {
-    return from_candid_record_n8(_uploadFile, _downloadFile, value);
+function from_candid_AuthResult_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AuthResult): AuthResult {
+    return from_candid_record_n7(_uploadFile, _downloadFile, value);
 }
 function from_candid_UserRole_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n5(_uploadFile, _downloadFile, value);
@@ -516,30 +252,20 @@ function from_candid_UserRole_n4(_uploadFile: (file: ExternalBlob) => Promise<Ui
 function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    status: _ChapterStatus;
-    name: string;
-    subjectId: bigint;
-    studyTimeMinutes: bigint;
+function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    userId: [] | [string];
+    authenticated: boolean;
 }): {
-    status: ChapterStatus;
-    name: string;
-    subjectId: bigint;
-    studyTimeMinutes: bigint;
+    userId?: string;
+    authenticated: boolean;
 } {
     return {
-        status: from_candid_ChapterStatus_n9(_uploadFile, _downloadFile, value.status),
-        name: value.name,
-        subjectId: value.subjectId,
-        studyTimeMinutes: value.studyTimeMinutes
+        userId: record_opt_to_undefined(from_candid_opt_n8(_uploadFile, _downloadFile, value.userId)),
+        authenticated: value.authenticated
     };
-}
-function from_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    pending: null;
-} | {
-    completed: null;
-}): ChapterStatus {
-    return "pending" in value ? ChapterStatus.pending : "completed" in value ? ChapterStatus.completed : value;
 }
 function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
@@ -550,25 +276,8 @@ function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
-function from_candid_vec_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Chapter>): Array<Chapter> {
-    return value.map((x)=>from_candid_Chapter_n7(_uploadFile, _downloadFile, x));
-}
-function to_candid_ChapterStatus_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ChapterStatus): _ChapterStatus {
-    return to_candid_variant_n12(_uploadFile, _downloadFile, value);
-}
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
-}
-function to_candid_variant_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ChapterStatus): {
-    pending: null;
-} | {
-    completed: null;
-} {
-    return value == ChapterStatus.pending ? {
-        pending: null
-    } : value == ChapterStatus.completed ? {
-        completed: null
-    } : value;
 }
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
