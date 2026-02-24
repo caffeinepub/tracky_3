@@ -1,122 +1,134 @@
 {
   "kind": "build_request",
-  "title": "Improve LoginPage styling and implement OTP backend functionality",
+  "title": "Fix non-working OTP login flow",
   "projectName": "Tracky",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-59",
-      "text": "Refine the LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining the existing light theme (white + blue color scheme), ensuring consistent padding, button styling, and mobile-friendly layout",
-      "target": "frontend",
+      "id": "REQ-64",
+      "text": "Debug and fix the OTP login flow end-to-end: verify that clicking Send OTP triggers the backend sendOTP method, displays appropriate loading state, and shows the OTP verification screen upon success",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-not-working"
         ],
         "quotes": [
-          "Adjust the styling"
+          "Not working"
         ]
       },
       "acceptanceCriteria": [
-        "LoginPage maintains white + blue color scheme",
-        "Form elements have consistent spacing and alignment",
-        "Buttons use consistent styling with hover states",
-        "Layout is responsive and works on mobile devices",
-        "Typography hierarchy is clear and readable"
+        "Send OTP button triggers backend sendOTP call with mobile number",
+        "Loading state displays while backend request is in progress",
+        "OTP verification screen appears after successful OTP send",
+        "Error messages display if sendOTP fails"
       ]
     },
     {
-      "id": "REQ-60",
-      "text": "Implement backend method sendOTP that accepts a mobile number (Text, 10 digits) and generates a 6-digit OTP code, storing it temporarily with the mobile number and an expiration timestamp (5 minutes validity)",
+      "id": "REQ-65",
+      "text": "Verify OTP verification flow: ensure that entering a valid 6-digit OTP and clicking Verify & Login calls the backend verifyOTP method, authenticates the user, and redirects to the dashboard for existing users",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-not-working"
+        ],
+        "quotes": [
+          "Not working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Verify & Login button triggers backend verifyOTP call with mobile number and OTP code",
+        "Loading state displays during verification",
+        "Successful verification redirects existing users to dashboard",
+        "Invalid OTP shows error message without redirecting"
+      ]
+    },
+    {
+      "id": "REQ-66",
+      "text": "Verify new user signup flow: ensure that after successful OTP verification for a new mobile number, the signup form appears with Full Name and Class/Course fields, and submitting creates the user profile and redirects to dashboard",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-not-working"
+        ],
+        "quotes": [
+          "Not working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "New users see signup form after OTP verification",
+        "Signup form submission creates user profile with provided details",
+        "Successful signup redirects to dashboard",
+        "Authentication state persists after signup"
+      ]
+    },
+    {
+      "id": "REQ-67",
+      "text": "Ensure useOTPAuth hook properly integrates with backend actor methods (sendOTP and verifyOTP) and maintains authentication state across page refreshes using localStorage",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-not-working"
+        ],
+        "quotes": [
+          "Not working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useOTPAuth hook calls backend sendOTP and verifyOTP methods via useActor",
+        "Authentication state (mobile number, isAuthenticated) persists in localStorage",
+        "App.tsx route protection correctly reads authentication state from useOTPAuth",
+        "Logout clears authentication state from localStorage"
+      ]
+    },
+    {
+      "id": "REQ-68",
+      "text": "Verify backend sendOTP method generates a 6-digit OTP for the provided mobile number, stores it with a 5-minute expiration timestamp, and returns success status",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-not-working"
         ],
         "quotes": [
-          "add the opt back end functionally"
+          "Not working"
         ]
       },
       "acceptanceCriteria": [
-        "Backend accepts 10-digit mobile number as input",
-        "Generates random 6-digit numeric OTP",
-        "Stores OTP with mobile number and 5-minute expiration",
-        "Returns success response indicating OTP was generated",
-        "Validates mobile number format (exactly 10 digits)"
+        "sendOTP accepts a 10-digit mobile number as Text",
+        "Generates a 6-digit OTP code",
+        "Stores OTP with mobile number and expiration timestamp (5 minutes from generation)",
+        "Returns success response indicating OTP was sent"
       ]
     },
     {
-      "id": "REQ-61",
-      "text": "Implement backend method verifyOTP that accepts mobile number and OTP code, validates the OTP against stored data, checks expiration, and returns authentication status with user ID if verification succeeds",
+      "id": "REQ-69",
+      "text": "Verify backend verifyOTP method validates the provided OTP against stored data, checks expiration, determines if the mobile number is a new or existing user, and returns appropriate authentication status with user information",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-final"
+          "msg-user-not-working"
         ],
         "quotes": [
-          "add the opt back end functionally"
+          "Not working"
         ]
       },
       "acceptanceCriteria": [
-        "Accepts mobile number and 6-digit OTP as input",
-        "Validates OTP matches the stored code for that mobile number",
-        "Checks OTP has not expired (within 5 minutes)",
-        "Returns success with user ID for valid OTP",
-        "Returns error for invalid or expired OTP",
-        "Clears OTP from storage after successful verification"
-      ]
-    },
-    {
-      "id": "REQ-62",
-      "text": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods, replacing mock localStorage logic with actual backend API calls for OTP generation and verification",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "add the opt back end functionally"
-        ]
-      },
-      "acceptanceCriteria": [
-        "useOTPAuth calls backend sendOTP method when sending OTP",
-        "useOTPAuth calls backend verifyOTP method during verification",
-        "Authentication state is updated based on backend verification response",
-        "Error handling for failed OTP operations is implemented",
-        "User session is established after successful OTP verification"
-      ]
-    },
-    {
-      "id": "REQ-63",
-      "text": "Update LoginPage component to display loading states during OTP send and verification operations, showing appropriate feedback messages and disabling form inputs while backend requests are in progress",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "add the opt back end functionally"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Send OTP button shows loading state while request is processing",
-        "Verify button shows loading state during OTP verification",
-        "Form inputs are disabled during active requests",
-        "Error messages are displayed for failed operations",
-        "Success feedback is shown before navigation to dashboard"
+        "verifyOTP accepts mobile number and OTP code as Text",
+        "Validates OTP matches stored code for the mobile number",
+        "Checks OTP has not expired (within 5 minutes of generation)",
+        "Returns authentication success with isNewUser flag and user principal/ID",
+        "Returns error for invalid or expired OTP"
       ]
     }
   ],
   "constraints": [
-    "Maintain single-actor backend architecture with all logic in backend/main.mo",
-    "Preserve existing useInternetIdentity.ts and useActor.ts files as read-only",
-    "Keep existing white + blue color scheme for LoginPage",
-    "Maintain current OTP flow: mobile entry → OTP verification → signup (for new users)"
+    "Do not modify the single-actor backend architecture in backend/main.mo",
+    "Do not edit immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
+    "Maintain OTP-based authentication system; do not reintroduce Internet Identity"
   ],
   "nonGoals": [
-    "Integrating with external SMS gateway services",
-    "Implementing actual SMS delivery (mock/placeholder implementation is acceptable)",
-    "Changing authentication flow or adding alternative login methods",
-    "Modifying other pages beyond LoginPage styling improvements"
+    "Implementing actual SMS delivery for OTP codes",
+    "Adding third-party authentication providers",
+    "Redesigning the LoginPage UI beyond fixing functionality"
   ],
   "imageRequirements": {
     "required": [],

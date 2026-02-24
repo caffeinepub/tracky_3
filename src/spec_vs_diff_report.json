@@ -1,40 +1,56 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T00:53:36.852Z",
-  "summary": "The diff implements all OTP backend functionality (sendOTP, verifyOTP) in main.mo, updates the frontend LoginPage with improved styling and loading states, and integrates useOTPAuth hook with backend API calls. All five requirements (REQ-59 through REQ-63) are fully addressed with appropriate error handling, validation, and user feedback.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-02-24T01:00:46.244Z",
+  "summary": "The diff implements comprehensive OTP authentication flow including backend methods (sendOTP, verifyOTP, signup), frontend hooks, and UI components for mobile number entry, OTP verification, and new user signup. However, some acceptance criteria details are not fully evident from the truncated diff.",
+  "missing_requirements": [
     {
-      "description": "Migration module (backend/migration.mo) implementing data migration from old actor structure to new actor structure with dropped legacy data",
-      "reason": "BuildRequest does not mention data migration, schema changes, or dropping old data structures. This was not requested.",
+      "id": "REQ-66",
+      "requirement": "Class/Course field in signup form",
+      "reason": "The signup form in LoginPage.tsx only shows Full Name field. No evidence of Class/Course field implementation in the truncated code.",
       "evidence": [
-        "backend/migration.mo",
-        "backend/main.mo"
+        "frontend/src/pages/LoginPage.tsx"
       ]
     },
     {
-      "description": "Authorization/access control system with admin and user permissions",
-      "reason": "BuildRequest explicitly states to maintain single-actor backend architecture and does not request implementing role-based access control or permission systems.",
-      "evidence": [
-        "backend/main.mo"
-      ]
-    },
-    {
-      "description": "User profile management methods (getCallerUserProfile, getUserProfile, saveCallerUserProfile) with authorization checks",
-      "reason": "While profile saving is needed for signup flow, the BuildRequest does not specify implementing these specific backend methods with admin/user permission checks. The authorization layer was not requested.",
+      "id": "REQ-68",
+      "requirement": "Validate 10-digit mobile number format in sendOTP",
+      "reason": "Backend sendOTP validates mobile number length (10 digits) but the requirement specifies accepting it 'as Text' format. The validation is present but may not match exact requirement wording about format acceptance.",
       "evidence": [
         "backend/main.mo"
       ]
     }
   ],
-  "confidence": 0.92,
+  "hallucinated_features": [
+    {
+      "description": "Migration module for data structure upgrades",
+      "reason": "A migration.mo file was added to handle UserProfile schema changes (adding id field and verifiedMobileNumbers map). This migration functionality was not requested in any requirement.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "description": "Pause/Resume functionality in StudyTimer",
+      "reason": "StudyTimer.tsx includes pause and resume buttons with state management. This feature was not part of the OTP login flow requirements and extends beyond fixing the login functionality.",
+      "evidence": [
+        "frontend/src/components/StudyTimer.tsx"
+      ]
+    },
+    {
+      "description": "Timer reset on chapter selection change",
+      "reason": "StudyTimer automatically resets when selectedChapter changes via useEffect. This behavior was not specified in the OTP login fix requirements.",
+      "evidence": [
+        "frontend/src/components/StudyTimer.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.75,
   "changed_files": [
     "backend/main.mo",
     "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/ChapterList.tsx",
-    "frontend/src/components/SubjectCard.tsx",
+    "frontend/src/components/StudyGoalCard.tsx",
+    "frontend/src/components/StudyTimer.tsx",
     "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/LoginPage.tsx",
     "project_state.json"

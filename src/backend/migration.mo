@@ -1,53 +1,48 @@
 import Map "mo:core/Map";
-import Nat "mo:core/Nat";
-import List "mo:core/List";
+import Text "mo:core/Text";
 import Time "mo:core/Time";
-import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
 
 module {
-  type OldMobileNumber = Nat;
+  type MobileNumber = Text;
+
+  type OTPRecord = {
+    code : Text;
+    expiry : Time.Time;
+  };
+
   type OldUserProfile = {
-    mobileNumber : OldMobileNumber;
-  };
-  type OldChapterStatus = {
-    #pending;
-    #completed;
-  };
-  type OldChapter = {
     name : Text;
-    status : OldChapterStatus;
-    studyTimeMinutes : Nat;
-    subjectId : Nat;
+    mobileNumber : Text;
   };
-  type OldSubject = {
-    id : Nat;
+
+  type NewUserProfile = {
+    id : Principal;
     name : Text;
-    createdAt : Time.Time;
+    mobileNumber : Text;
   };
-  type OldOTP = Nat;
-  type OldStudyTimeEntry = {
-    date : Int;
-    minutes : Nat;
-  };
+
   type OldActor = {
-    userProfiles : Map.Map<OldMobileNumber, OldUserProfile>;
-    dailyStudyGoalsByUser : Map.Map<OldMobileNumber, Nat>;
-    chaptersByUser : Map.Map<OldMobileNumber, List.List<OldChapter>>;
-    subjectsByUser : Map.Map<OldMobileNumber, List.List<OldSubject>>;
-    nextSubjectId : Nat;
-    pendingOtps : Map.Map<Text, OldOTP>;
-    principalToMobile : Map.Map<Principal, OldMobileNumber>;
-    mobileToPrincipal : Map.Map<OldMobileNumber, Principal>;
+    devOtpStore : Map.Map<Text, OTPRecord>;
+    userProfiles : Map.Map<Principal, OldUserProfile>;
   };
 
   type NewActor = {
-    userProfiles : Map.Map<Principal, { name : Text; mobileNumber : Text }>;
+    devOtpStore : Map.Map<Text, OTPRecord>;
+    userProfiles : Map.Map<Principal, NewUserProfile>;
+    verifiedMobileNumbers : Map.Map<Principal, Text>;
   };
 
-  public func run(_ : OldActor) : NewActor {
-    // Initialize empty map for new userProfiles - old data is not needed.
-    // All old data structures are explicitly dropped.
-    { userProfiles = Map.empty<Principal, { name : Text; mobileNumber : Text }>() };
+  public func run(old : OldActor) : NewActor {
+    let newUserProfiles = old.userProfiles.map<Principal, OldUserProfile, NewUserProfile>(
+      func(id, oldProfile) {
+        { oldProfile with id };
+      }
+    );
+    {
+      devOtpStore = old.devOtpStore;
+      userProfiles = newUserProfiles;
+      verifiedMobileNumbers = Map.empty<Principal, Text>();
+    };
   };
 };

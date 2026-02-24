@@ -1,64 +1,98 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Improve LoginPage styling and implement OTP backend functionality",
+  "title": "Fix non-working OTP login flow",
   "requirements": [
     {
-      "id": "REQ-59",
-      "summary": "Refine LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining white + blue color scheme",
+      "id": "REQ-64",
+      "summary": "Debug and fix the OTP login flow end-to-end: verify that clicking Send OTP triggers the backend sendOTP method, displays appropriate loading state, and shows the OTP verification screen upon success",
       "acceptanceCriteria": [
-        "LoginPage maintains white + blue color scheme",
-        "Form elements have consistent spacing and alignment",
-        "Buttons use consistent styling with hover states",
-        "Layout is responsive and works on mobile devices",
-        "Typography hierarchy is clear and readable"
+        "Send OTP button triggers backend sendOTP call with mobile number",
+        "Loading state displays while backend request is in progress",
+        "OTP verification screen appears after successful OTP send",
+        "Error messages display if sendOTP fails"
       ],
       "file_operations": [
         {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Implement useSendOTP mutation hook that calls actor.sendOTP with mobile number, handles loading states, success, and error responses"
+        },
+        {
           "path": "frontend/src/pages/LoginPage.tsx",
           "operation": "modify",
-          "description": "Refine the LoginPage component styling to improve visual hierarchy, spacing, and button consistency. Update the container structure to use consistent padding (e.g., p-8), improve form field spacing with gap utilities, ensure buttons have consistent sizing and hover states using the existing blue color scheme from Tailwind config, add responsive breakpoints for mobile layout, and improve typography hierarchy with appropriate text sizing and weight. Keep the existing three-step flow (mobile entry, OTP verification, signup) intact."
+          "description": "Wire useSendOTP mutation into Send OTP button click handler, display loading state during mutation (isLoading), show OTP verification screen on success (step 2), and display error messages on failure using toast or error state"
         }
       ]
     },
     {
-      "id": "REQ-62",
-      "summary": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods",
+      "id": "REQ-65",
+      "summary": "Verify OTP verification flow: ensure that entering a valid 6-digit OTP and clicking Verify & Login calls the backend verifyOTP method, authenticates the user, and redirects to the dashboard for existing users",
       "acceptanceCriteria": [
-        "useOTPAuth calls backend sendOTP method when sending OTP",
-        "useOTPAuth calls backend verifyOTP method during verification",
-        "Authentication state is updated based on backend verification response",
-        "Error handling for failed OTP operations is implemented",
-        "User session is established after successful OTP verification"
+        "Verify & Login button triggers backend verifyOTP call with mobile number and OTP code",
+        "Loading state displays during verification",
+        "Successful verification redirects existing users to dashboard",
+        "Invalid OTP shows error message without redirecting"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Implement useVerifyOTP mutation hook that calls actor.verifyOTP with mobile number and OTP code, returns AuthResult with isNewUser flag, userId, and authenticated status"
+        },
+        {
+          "path": "frontend/src/pages/LoginPage.tsx",
+          "operation": "modify",
+          "description": "Wire useVerifyOTP mutation into Verify & Login button, display loading state during verification, on success call useOTPAuth.login(mobileNumber) to set authentication state, redirect existing users (isNewUser=false) to dashboard using router navigation, show signup form for new users (isNewUser=true), and display error messages for invalid OTP"
+        },
+        {
+          "path": "frontend/src/hooks/useOTPAuth.tsx",
+          "operation": "modify",
+          "description": "Ensure login method persists mobile number and isAuthenticated=true to localStorage, and expose these values via context for route protection in App.tsx"
+        }
+      ]
+    },
+    {
+      "id": "REQ-66",
+      "summary": "Verify new user signup flow: ensure that after successful OTP verification for a new mobile number, the signup form appears with Full Name and Class/Course fields, and submitting creates the user profile and redirects to dashboard",
+      "acceptanceCriteria": [
+        "New users see signup form after OTP verification",
+        "Signup form submission creates user profile with provided details",
+        "Successful signup redirects to dashboard",
+        "Authentication state persists after signup"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Implement useSignup mutation hook that calls actor.signup with SignupInput (name and mobileNumber), returns UserProfile, and invalidates currentUserProfile query on success"
+        },
+        {
+          "path": "frontend/src/pages/LoginPage.tsx",
+          "operation": "modify",
+          "description": "Add signup form step (step 3) that appears when isNewUser=true after OTP verification, collect Full Name and Class/Course fields, wire useSignup mutation to form submission, display loading state during signup, redirect to dashboard on successful signup, and ensure authentication state persists via useOTPAuth"
+        }
+      ]
+    },
+    {
+      "id": "REQ-67",
+      "summary": "Ensure useOTPAuth hook properly integrates with backend actor methods (sendOTP and verifyOTP) and maintains authentication state across page refreshes using localStorage",
+      "acceptanceCriteria": [
+        "useOTPAuth hook calls backend sendOTP and verifyOTP methods via useActor",
+        "Authentication state (mobile number, isAuthenticated) persists in localStorage",
+        "App.tsx route protection correctly reads authentication state from useOTPAuth",
+        "Logout clears authentication state from localStorage"
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useOTPAuth.tsx",
           "operation": "modify",
-          "description": "Replace the mock localStorage OTP logic with actual backend integration. Import useActor hook to access the backend actor. Update sendOTP function to call actor.sendOTP(mobileNumber) instead of generating and storing OTP locally. Update verifyOTP function to call actor.verifyOTP(mobileNumber, code) and handle the AuthResult response. Set authentication state based on the backend verification result (authenticated flag and userId). Add proper error handling for failed backend calls and return error messages to the UI. Remove the mock OTP generation and localStorage storage logic since the backend now handles OTP management."
+          "description": "Ensure login method stores mobile number and isAuthenticated=true in localStorage, initialize state from localStorage on mount to persist across refreshes, ensure logout method clears localStorage keys and sets isAuthenticated=false, and expose mobileNumber and isAuthenticated via context"
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add useMutation hooks for sendOTP and verifyOTP operations. Create useSendOTP mutation that calls actor.sendOTP(mobileNumber) and handles loading/error states. Create useVerifyOTP mutation that calls actor.verifyOTP(mobileNumber, code), returns the AuthResult, and invalidates relevant query cache on success. These mutations will be consumed by the useOTPAuth hook and LoginPage component to provide loading states and error handling."
-        }
-      ]
-    },
-    {
-      "id": "REQ-63",
-      "summary": "Update LoginPage to display loading states during OTP operations and show feedback messages",
-      "acceptanceCriteria": [
-        "Send OTP button shows loading state while request is processing",
-        "Verify button shows loading state during OTP verification",
-        "Form inputs are disabled during active requests",
-        "Error messages are displayed for failed operations",
-        "Success feedback is shown before navigation to dashboard"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/LoginPage.tsx",
-          "operation": "modify",
-          "description": "Update LoginPage to consume the sendOTP and verifyOTP mutations from useQueries. Add loading state handling by checking mutation.isPending for both send and verify operations. Update the Send OTP button to show loading text and disable when isPending is true. Update the Verify button to show loading text and disable during verification. Disable mobile number input during OTP send operation and OTP code input during verification. Display error messages from mutation.error when operations fail. Show a success message briefly after successful OTP verification before the user is redirected to dashboard (the redirect logic is handled by App.tsx protected routes). Ensure form submission handlers call the mutation functions instead of the old hook methods."
+          "description": "Verify that route protection logic correctly reads isAuthenticated from useOTPAuth context, redirects unauthenticated users to login page, and allows authenticated users to access protected routes (dashboard, subjects, syllabus)"
         }
       ]
     }

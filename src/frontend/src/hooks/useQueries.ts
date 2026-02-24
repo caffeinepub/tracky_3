@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { UserProfile, AuthResult } from '../backend';
+import type { UserProfile, AuthResult, SignupInput } from '../backend';
 
 // Temporary types until backend is restored
 export type ChapterStatus = { __kind__: 'pending' } | { __kind__: 'completed' };
@@ -37,6 +37,22 @@ export function useVerifyOTP() {
       if (!actor) throw new Error('Actor not available');
       const result: AuthResult = await actor.verifyOTP(mobileNumber, code);
       return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
+  });
+}
+
+export function useSignup() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: SignupInput) => {
+      if (!actor) throw new Error('Actor not available');
+      const profile: UserProfile = await actor.signup(input);
+      return profile;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
@@ -199,7 +215,7 @@ export function useUpdateChapterStatus() {
   });
 }
 
-export function useAddStudyTimeToChapter() {
+export function useAddStudyTime() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -212,38 +228,13 @@ export function useAddStudyTimeToChapter() {
       minutes: number;
       subjectId: bigint;
     }) => {
-      console.warn('Backend method addStudyTimeToChapter() not implemented');
+      console.warn('Backend method addStudyTime() not implemented');
       throw new Error('Backend functionality not available');
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['chapters', 'bySubject', variables.subjectId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['totalStudyTime'] });
-    },
-  });
-}
-
-// Study Goal Queries - BACKEND NOT IMPLEMENTED
-export function useGetDailyStudyGoal() {
-  return useQuery<bigint>({
-    queryKey: ['dailyStudyGoal'],
-    queryFn: async () => {
-      console.warn('Backend method getDailyStudyGoal() not implemented');
-      return BigInt(0);
-    },
-    enabled: false,
-  });
-}
-
-export function useSetDailyStudyGoal() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (minutes: number) => {
-      console.warn('Backend method setDailyStudyGoal() not implemented');
-      throw new Error('Backend functionality not available');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dailyStudyGoal'] });
+      queryClient.invalidateQueries({ queryKey: ['todayStudyTime'] });
     },
   });
 }
@@ -260,17 +251,6 @@ export function useGetDashboardProgress() {
   });
 }
 
-export function useGetChapterStats() {
-  return useQuery<[bigint, bigint, bigint]>({
-    queryKey: ['chapterStats'],
-    queryFn: async () => {
-      console.warn('Backend method getChapterStats() not implemented');
-      return [BigInt(0), BigInt(0), BigInt(0)];
-    },
-    enabled: false,
-  });
-}
-
 export function useGetTotalStudyTime() {
   return useQuery<bigint>({
     queryKey: ['totalStudyTime'],
@@ -279,5 +259,52 @@ export function useGetTotalStudyTime() {
       return BigInt(0);
     },
     enabled: false,
+  });
+}
+
+export function useGetChapterStats() {
+  return useQuery<{ completed: bigint; pending: bigint }>({
+    queryKey: ['chapterStats'],
+    queryFn: async () => {
+      console.warn('Backend method getChapterStats() not implemented');
+      return { completed: BigInt(0), pending: BigInt(0) };
+    },
+    enabled: false,
+  });
+}
+
+export function useGetTodayStudyTime() {
+  return useQuery<bigint>({
+    queryKey: ['todayStudyTime'],
+    queryFn: async () => {
+      console.warn('Backend method getTodayStudyTime() not implemented');
+      return BigInt(0);
+    },
+    enabled: false,
+  });
+}
+
+export function useGetDailyGoal() {
+  return useQuery<bigint>({
+    queryKey: ['dailyGoal'],
+    queryFn: async () => {
+      console.warn('Backend method getDailyGoal() not implemented');
+      return BigInt(60);
+    },
+    enabled: false,
+  });
+}
+
+export function useSetDailyGoal() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (goalMinutes: bigint) => {
+      console.warn('Backend method setDailyGoal() not implemented');
+      throw new Error('Backend functionality not available');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dailyGoal'] });
+    },
   });
 }

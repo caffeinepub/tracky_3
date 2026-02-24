@@ -2,9 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-refine-the-loginpage-ui-styling-to-improve-visual-hierarchy-spacing-and-responsiveness-while-maintaining-the-existing-light-theme-white-blue-color-scheme-ensuring-consistent-padding-button-styling-and-mobile-friendly-layout",
-      "featureTitle": "Refine the LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining the existing light theme (white + blue color scheme), ensuring consistent padding, button styling, and mobile-friendly layout",
+      "featureId": "feature-debug-and-fix-the-otp-login-flow-end-to-end-verify-that-clicking-send-otp-triggers-the-backend-sendotp-method-displays-appropriate-loading-state-and-shows-the-otp-verification-screen-upon-success",
+      "featureTitle": "Debug and fix the OTP login flow end-to-end: verify that clicking Send OTP triggers the backend sendOTP method, displays appropriate loading state, and shows the OTP verification screen upon success",
       "files": [
+        "frontend/src/hooks/useQueries.ts",
         "frontend/src/pages/LoginPage.tsx"
       ],
       "components": [
@@ -16,33 +17,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-59"
+        "REQ-64"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-useotpauth-hook-to-integrate-with-backend-sendotp-and-verifyotp-methods-replacing-mock-localstorage-logic-with-actual-backend-api-calls-for-otp-generation-and-verification",
-      "featureTitle": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods, replacing mock localStorage logic with actual backend API calls for OTP generation and verification",
+      "featureId": "feature-verify-otp-verification-flow-ensure-that-entering-a-valid-6-digit-otp-and-clicking-verify-login-calls-the-backend-verifyotp-method-authenticates-the-user-and-redirects-to-the-dashboard-for-existing-users",
+      "featureTitle": "Verify OTP verification flow: ensure that entering a valid 6-digit OTP and clicking Verify & Login calls the backend verifyOTP method, authenticates the user, and redirects to the dashboard for existing users",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-62"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-loginpage-component-to-display-loading-states-during-otp-send-and-verification-operations-showing-appropriate-feedback-messages-and-disabling-form-inputs-while-backend-requests-are-in-progress",
-      "featureTitle": "Update LoginPage component to display loading states during OTP send and verification operations, showing appropriate feedback messages and disabling form inputs while backend requests are in progress",
-      "files": [
+        "frontend/src/hooks/useQueries.ts",
         "frontend/src/pages/LoginPage.tsx"
       ],
       "components": [
@@ -54,7 +37,27 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-63"
+        "REQ-65"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-verify-new-user-signup-flow-ensure-that-after-successful-otp-verification-for-a-new-mobile-number-the-signup-form-appears-with-full-name-and-class-course-fields-and-submitting-creates-the-user-profile-and-redirects-to-dashboard",
+      "featureTitle": "Verify new user signup flow: ensure that after successful OTP verification for a new mobile number, the signup form appears with Full Name and Class/Course fields, and submitting creates the user profile and redirects to dashboard",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/LoginPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-66"
       ],
       "confidence": "high"
     }

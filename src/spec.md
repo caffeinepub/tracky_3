@@ -1,13 +1,15 @@
 # Specification
 
 ## Summary
-**Goal:** Improve LoginPage UI styling and implement full OTP backend functionality with backend API integration.
+**Goal:** Fix the non-working OTP login flow to enable users to authenticate via mobile number and OTP code.
 
 **Planned changes:**
-- Refine LoginPage styling with better spacing, responsive layout, and consistent button design while maintaining white + blue color scheme
-- Implement backend sendOTP method that generates 6-digit OTP codes with 5-minute expiration for 10-digit mobile numbers
-- Implement backend verifyOTP method that validates OTP codes, checks expiration, and returns authentication status
-- Update useOTPAuth hook to call backend sendOTP and verifyOTP methods instead of using mock localStorage
-- Add loading states and error handling to LoginPage during OTP operations
+- Debug and fix the Send OTP button to trigger backend sendOTP method with loading state
+- Fix OTP verification screen to properly validate 6-digit codes via backend verifyOTP method
+- Ensure new user signup flow displays form after OTP verification and creates user profile
+- Fix useOTPAuth hook integration with backend actor methods (sendOTP and verifyOTP)
+- Ensure authentication state persists in localStorage across page refreshes
+- Verify backend sendOTP generates 6-digit OTP with 5-minute expiration
+- Verify backend verifyOTP validates OTP, checks expiration, and returns authentication status
 
-**User-visible outcome:** Users experience a more polished login interface with improved visual design and can authenticate using OTP codes that are now validated by the backend system with proper expiration handling.
+**User-visible outcome:** Users can successfully log in by entering their mobile number, receiving an OTP, verifying it, and either accessing their dashboard (existing users) or completing signup (new users). Authentication state persists across page refreshes.

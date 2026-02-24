@@ -90,10 +90,16 @@ export class ExternalBlob {
     }
 }
 export interface AuthResult {
+    isNewUser: boolean;
     userId?: string;
     authenticated: boolean;
 }
 export interface UserProfile {
+    id: Principal;
+    name: string;
+    mobileNumber: string;
+}
+export interface SignupInput {
     name: string;
     mobileNumber: string;
 }
@@ -105,12 +111,14 @@ export enum UserRole {
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    cleanupExpiredOTPs(): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     sendOTP(mobileNumber: string): Promise<void>;
+    signup(input: SignupInput): Promise<UserProfile>;
     verifyOTP(mobileNumber: string, code: string): Promise<AuthResult>;
 }
 import type { AuthResult as _AuthResult, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
@@ -141,6 +149,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async cleanupExpiredOTPs(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.cleanupExpiredOTPs();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.cleanupExpiredOTPs();
             return result;
         }
     }
@@ -228,6 +250,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async signup(arg0: SignupInput): Promise<UserProfile> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.signup(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.signup(arg0);
+            return result;
+        }
+    }
     async verifyOTP(arg0: string, arg1: string): Promise<AuthResult> {
         if (this.processError) {
             try {
@@ -256,13 +292,16 @@ function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
     return value.length === 0 ? null : value[0];
 }
 function from_candid_record_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    isNewUser: boolean;
     userId: [] | [string];
     authenticated: boolean;
 }): {
+    isNewUser: boolean;
     userId?: string;
     authenticated: boolean;
 } {
     return {
+        isNewUser: value.isNewUser,
         userId: record_opt_to_undefined(from_candid_opt_n8(_uploadFile, _downloadFile, value.userId)),
         authenticated: value.authenticated
     };

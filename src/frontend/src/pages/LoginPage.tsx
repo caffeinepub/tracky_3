@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Loader2, Smartphone, CheckCircle2 } from 'lucide-react';
-import { useSendOTP, useVerifyOTP, useGetCallerUserProfile, useSaveCallerUserProfile } from '../hooks/useQueries';
+import { useSendOTP, useVerifyOTP, useSignup } from '../hooks/useQueries';
 
 type AuthStep = 'mobile' | 'otp' | 'signup';
 
@@ -25,8 +25,7 @@ export default function LoginPage() {
 
   const sendOTPMutation = useSendOTP();
   const verifyOTPMutation = useVerifyOTP();
-  const { data: userProfile } = useGetCallerUserProfile();
-  const saveProfileMutation = useSaveCallerUserProfile();
+  const signupMutation = useSignup();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -76,15 +75,18 @@ export default function LoginPage() {
       
       setSuccessMessage('OTP verified successfully!');
       
-      // Small delay to show success message before navigation
-      setTimeout(() => {
-        // Check if user has a profile, if not show signup
-        if (!userProfile) {
+      // Check if this is a new user
+      if (result.isNewUser) {
+        // New user - show signup form
+        setTimeout(() => {
           setStep('signup');
-        } else {
+        }, 500);
+      } else {
+        // Existing user - redirect to dashboard
+        setTimeout(() => {
           navigate({ to: '/dashboard' });
-        }
-      }, 500);
+        }, 500);
+      }
     } catch (err: any) {
       console.error('OTP verification error:', err);
       setError(err.message || 'Failed to verify OTP. Please try again.');
@@ -101,7 +103,7 @@ export default function LoginPage() {
     }
 
     try {
-      await saveProfileMutation.mutateAsync({
+      await signupMutation.mutateAsync({
         name: fullName,
         mobileNumber: mobileNumber,
       });
@@ -113,7 +115,7 @@ export default function LoginPage() {
         navigate({ to: '/dashboard' });
       }, 500);
     } catch (err: any) {
-      console.error('Profile creation error:', err);
+      console.error('Signup error:', err);
       setError(err.message || 'Failed to create account. Please try again.');
     }
   };
@@ -123,7 +125,7 @@ export default function LoginPage() {
     setMobileNumber(value);
   };
 
-  const isLoading = sendOTPMutation.isPending || verifyOTPMutation.isPending || saveProfileMutation.isPending;
+  const isLoading = sendOTPMutation.isPending || verifyOTPMutation.isPending || signupMutation.isPending;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4">
@@ -302,7 +304,7 @@ export default function LoginPage() {
                   className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base font-medium"
                   size="lg"
                 >
-                  {saveProfileMutation.isPending ? (
+                  {signupMutation.isPending ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                       Creating Account...

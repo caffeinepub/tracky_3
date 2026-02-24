@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 17,
+  "projectStateVersion": 19,
   "summary": "Student productivity app named 'Tracky' for tracking syllabus progress, study time, and chapter completion with OTP-based mobile authentication. Students can add subjects, and within each subject, add multiple chapters with completion tracking. Progress is calculated per-subject and overall, with automatic report generation.",
   "architectural_notes": [
     "Database must enforce per-user data isolation",
@@ -14,8 +14,10 @@
     "Study timer supports pause/resume in addition to start/stop functionality",
     "OTP-based authentication replaces email/password: mobile number is primary identifier"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "OTP login flow is not working in Version 8"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-user-sign-up-functionality-with-email-and-password-authentication",
@@ -368,6 +370,30 @@
         "REQ-63"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-otp-login-flow-end-to-end-verify-that-clicking-send-otp-triggers-the-backend-sendotp-method-displays-appropriate-loading-state-and-shows-the-otp-verification-screen-upon-success",
+      "title": "Debug and fix the OTP login flow end-to-end: verify that clicking Send OTP triggers the backend sendOTP method, displays appropriate loading state, and shows the OTP verification screen upon success",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-otp-verification-flow-ensure-that-entering-a-valid-6-digit-otp-and-clicking-verify-login-calls-the-backend-verifyotp-method-authenticates-the-user-and-redirects-to-the-dashboard-for-existing-users",
+      "title": "Verify OTP verification flow: ensure that entering a valid 6-digit OTP and clicking Verify & Login calls the backend verifyOTP method, authenticates the user, and redirects to the dashboard for existing users",
+      "reqIds": [
+        "REQ-65"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-new-user-signup-flow-ensure-that-after-successful-otp-verification-for-a-new-mobile-number-the-signup-form-appears-with-full-name-and-class-course-fields-and-submitting-creates-the-user-profile-and-redirects-to-dashboard",
+      "title": "Verify new user signup flow: ensure that after successful OTP verification for a new mobile number, the signup form appears with Full Name and Class/Course fields, and submitting creates the user profile and redirects to dashboard",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -685,6 +711,30 @@
       "summary": "Implement backend method verifyOTP that accepts mobile number and OTP code, validates the OTP against stored data, checks expiration, and returns authentication status with user ID if verification succeeds",
       "reqIds": [
         "REQ-61"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-56",
+      "summary": "Ensure useOTPAuth hook properly integrates with backend actor methods (sendOTP and verifyOTP) and maintains authentication state across page refreshes using localStorage",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-57",
+      "summary": "Verify backend sendOTP method generates a 6-digit OTP for the provided mobile number, stores it with a 5-minute expiration timestamp, and returns success status",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-58",
+      "summary": "Verify backend verifyOTP method validates the provided OTP against stored data, checks expiration, determines if the mobile number is a new or existing user, and returns appropriate authentication status with user information",
+      "reqIds": [
+        "REQ-69"
       ],
       "status": "pending"
     }

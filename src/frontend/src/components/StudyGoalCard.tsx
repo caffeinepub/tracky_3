@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Target, CheckCircle2 } from 'lucide-react';
-import { useGetDailyStudyGoal, useSetDailyStudyGoal, useGetTotalStudyTime } from '../hooks/useQueries';
+import { useGetDailyGoal, useSetDailyGoal, useGetTotalStudyTime } from '../hooks/useQueries';
 import { formatStudyTime } from '../utils/timeFormatters';
 
 export default function StudyGoalCard() {
-  const { data: dailyGoal } = useGetDailyStudyGoal();
+  const { data: dailyGoal } = useGetDailyGoal();
   const { data: totalStudyTime } = useGetTotalStudyTime();
-  const setDailyGoalMutation = useSetDailyStudyGoal();
+  const setDailyGoalMutation = useSetDailyGoal();
   const [goalInput, setGoalInput] = useState('');
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function StudyGoalCard() {
     if (isNaN(minutes) || minutes <= 0) return;
 
     try {
-      await setDailyGoalMutation.mutateAsync(minutes);
+      await setDailyGoalMutation.mutateAsync(BigInt(minutes));
     } catch (err) {
       console.error('Failed to set daily goal:', err);
     }

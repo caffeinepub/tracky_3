@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Play, Square, Clock, AlertCircle, Pause } from 'lucide-react';
-import { useAddStudyTimeToChapter } from '../hooks/useQueries';
+import { useAddStudyTime } from '../hooks/useQueries';
 
 interface StudyTimerProps {
   selectedChapter?: string | null;
@@ -15,7 +15,7 @@ export default function StudyTimer({ selectedChapter, subjectId }: StudyTimerPro
   const [isPaused, setIsPaused] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const addStudyTimeMutation = useAddStudyTimeToChapter();
+  const addStudyTimeMutation = useAddStudyTime();
 
   // Reset timer when selected chapter changes
   useEffect(() => {

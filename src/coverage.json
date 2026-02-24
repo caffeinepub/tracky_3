@@ -1,62 +1,78 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T00:53:36.855Z",
+  "generatedAt": "2026-02-24T01:00:46.248Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
+    "total": 6,
     "implemented": 3,
     "items": [
       {
-        "id": "REQ-59",
-        "summary": "Refine the LoginPage UI styling to improve visual hierarchy, spacing, and responsiveness while maintaining the existing light theme (white + blue color scheme), ensuring consistent padding, button styling, and mobile-friendly layout",
+        "id": "REQ-64",
+        "summary": "Debug and fix the OTP login flow end-to-end: verify that clicking Send OTP triggers the backend sendOTP method, displays appropriate loading state, and shows the OTP verification screen upon success",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
           "frontend/src/pages/LoginPage.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
           "frontend/src/pages/LoginPage.tsx"
         ]
       },
       {
-        "id": "REQ-60",
-        "summary": "Implement backend method sendOTP that accepts a mobile number (Text, 10 digits) and generates a 6-digit OTP code, storing it temporarily with the mobile number and an expiration timestamp (5 minutes validity)",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-61",
-        "summary": "Implement backend method verifyOTP that accepts mobile number and OTP code, validates the OTP against stored data, checks expiration, and returns authentication status with user ID if verification succeeds",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-62",
-        "summary": "Update useOTPAuth hook to integrate with backend sendOTP and verifyOTP methods, replacing mock localStorage logic with actual backend API calls for OTP generation and verification",
+        "id": "REQ-65",
+        "summary": "Verify OTP verification flow: ensure that entering a valid 6-digit OTP and clicking Verify & Login calls the backend verifyOTP method, authenticates the user, and redirects to the dashboard for existing users",
         "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/LoginPage.tsx",
+          "frontend/src/hooks/useOTPAuth.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/LoginPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-66",
+        "summary": "Verify new user signup flow: ensure that after successful OTP verification for a new mobile number, the signup form appears with Full Name and Class/Course fields, and submitting creates the user profile and redirects to dashboard",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/LoginPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/LoginPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-67",
+        "summary": "Ensure useOTPAuth hook properly integrates with backend actor methods (sendOTP and verifyOTP) and maintains authentication state across page refreshes using localStorage",
+        "status": "missing",
         "plannedFiles": [
           "frontend/src/hooks/useOTPAuth.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/App.tsx"
         ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
+        "matchedFiles": []
       },
       {
-        "id": "REQ-63",
-        "summary": "Update LoginPage component to display loading states during OTP send and verification operations, showing appropriate feedback messages and disabling form inputs while backend requests are in progress",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/LoginPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/LoginPage.tsx"
-        ]
+        "id": "REQ-68",
+        "summary": "Verify backend sendOTP method generates a 6-digit OTP for the provided mobile number, stores it with a 5-minute expiration timestamp, and returns success status",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-69",
+        "summary": "Verify backend verifyOTP method validates the provided OTP against stored data, checks expiration, determines if the mobile number is a new or existing user, and returns appropriate authentication status with user information",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
@@ -69,8 +85,8 @@
     "frontend-implementation-plan.json",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/components/ChapterList.tsx",
-    "frontend/src/components/SubjectCard.tsx",
+    "frontend/src/components/StudyGoalCard.tsx",
+    "frontend/src/components/StudyTimer.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useQueries.ts",

@@ -14,10 +14,16 @@ export const UserRole = IDL.Variant({
   'guest' : IDL.Null,
 });
 export const UserProfile = IDL.Record({
+  'id' : IDL.Principal,
+  'name' : IDL.Text,
+  'mobileNumber' : IDL.Text,
+});
+export const SignupInput = IDL.Record({
   'name' : IDL.Text,
   'mobileNumber' : IDL.Text,
 });
 export const AuthResult = IDL.Record({
+  'isNewUser' : IDL.Bool,
   'userId' : IDL.Opt(IDL.Text),
   'authenticated' : IDL.Bool,
 });
@@ -25,6 +31,7 @@ export const AuthResult = IDL.Record({
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'cleanupExpiredOTPs' : IDL.Func([], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getUserProfile' : IDL.Func(
@@ -35,6 +42,7 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'sendOTP' : IDL.Func([IDL.Text], [], []),
+  'signup' : IDL.Func([SignupInput], [UserProfile], []),
   'verifyOTP' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
 });
 
@@ -47,10 +55,16 @@ export const idlFactory = ({ IDL }) => {
     'guest' : IDL.Null,
   });
   const UserProfile = IDL.Record({
+    'id' : IDL.Principal,
+    'name' : IDL.Text,
+    'mobileNumber' : IDL.Text,
+  });
+  const SignupInput = IDL.Record({
     'name' : IDL.Text,
     'mobileNumber' : IDL.Text,
   });
   const AuthResult = IDL.Record({
+    'isNewUser' : IDL.Bool,
     'userId' : IDL.Opt(IDL.Text),
     'authenticated' : IDL.Bool,
   });
@@ -58,6 +72,7 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'cleanupExpiredOTPs' : IDL.Func([], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getUserProfile' : IDL.Func(
@@ -68,6 +83,7 @@ export const idlFactory = ({ IDL }) => {
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'sendOTP' : IDL.Func([IDL.Text], [], []),
+    'signup' : IDL.Func([SignupInput], [UserProfile], []),
     'verifyOTP' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
   });
 };

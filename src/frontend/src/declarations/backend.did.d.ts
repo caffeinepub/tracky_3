@@ -11,22 +11,30 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface AuthResult {
+  'isNewUser' : boolean,
   'userId' : [] | [string],
   'authenticated' : boolean,
 }
-export interface UserProfile { 'name' : string, 'mobileNumber' : string }
+export interface SignupInput { 'name' : string, 'mobileNumber' : string }
+export interface UserProfile {
+  'id' : Principal,
+  'name' : string,
+  'mobileNumber' : string,
+}
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'cleanupExpiredOTPs' : ActorMethod<[], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'sendOTP' : ActorMethod<[string], undefined>,
+  'signup' : ActorMethod<[SignupInput], UserProfile>,
   'verifyOTP' : ActorMethod<[string, string], AuthResult>,
 }
 export declare const idlService: IDL.ServiceClass;
